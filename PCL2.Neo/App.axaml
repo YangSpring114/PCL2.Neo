@@ -9,12 +9,10 @@
         <local:ViewLocator/>
     </Application.DataTemplates>
   
-    <Application.Styles>
-        <FluentTheme />
-    </Application.Styles>
-
-    <Application.Resources>
+     <Application.Resources>
         <ResourceDictionary>
+            
+            <FontFamily x:Key="Pcl2English">avares://PCL2.Neo/Resources/Font.ttf#PCL English</FontFamily>
             
             <!-- 颜色表 -->
             <SolidColorBrush x:Key="ColorBrush1">#343d4a</SolidColorBrush>
@@ -63,5 +61,19 @@
             <SolidColorBrush x:Key="ColorBrushSemiTransparent">#01eaf2fe</SolidColorBrush>
             <SolidColorBrush x:Key="ColorBrushBackgroundTransparentSidebar" Color="#D2FFFFFF" />
         </ResourceDictionary>
-    </Application.Resources>
+    </Application.Resources>         
+             
+    <Application.Styles>
+        <FluentTheme />
+       
+        <!-- TextBlock -->
+        <Style Selector="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource ColorBrush1}" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="FontFamily" Value="{StaticResource Pcl2English}" />
+        </Style>
+    </Application.Styles>
+
+   
 </Application>
