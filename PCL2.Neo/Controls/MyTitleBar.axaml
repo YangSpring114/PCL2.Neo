@@ -32,7 +32,7 @@
                 <Path Grid.Column="0" x:Name="ShapeTitleLogo" Data="M26,29 v-25 h5 a7,7 180 0 1 0,14 h-5 M61,6.5 a10,11.5 180 1 0 0,18 M68,2.5 v24.5 h12 M98,2 v27 M107,2 v27" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="19,15.5,0,15.5" Stretch="Fill" Stroke="White" StrokeThickness="1.9" Width="53" />
                 <TextBlock Grid.Column="0" x:Name="LabTitleLogo" IsVisible="False" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="18,0,0,0" Foreground="White" FontSize="17" VerticalAlignment="Center" />
                 <Image Grid.Column="0" x:Name="ImageTitleLogo" IsVisible="False" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="7" VerticalAlignment="Center" />
-                <Border x:Name="NeoLogo" Grid.Column="1" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="12,0,0,0" Background="White" CornerRadius="5" Height="20" Width="35">
+                <Border x:Name="NeoLogo" Grid.Column="1" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="12,0,0,0" Background="White" CornerRadius="5" Height="20" Width="32">
                     <TextBlock Text="Neo" Foreground="{DynamicResource ColorBrush2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
             </Grid>

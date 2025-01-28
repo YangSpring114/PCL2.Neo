@@ -11,6 +11,9 @@
   <ItemGroup>
     <Folder Include="Models\" />
     <AvaloniaResource Include="Assets\**" />
+    <Folder Include="Resources\" />
+    <None Remove="Resources\Font.ttf" />
+    <AvaloniaResource Include="Resources\Font.ttf" />
   </ItemGroup>
 
   <ItemGroup>
