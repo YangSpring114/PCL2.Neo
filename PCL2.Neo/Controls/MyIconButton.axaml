@@ -1,0 +1,26 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:PCL2.Neo.Controls">
+    <Design.PreviewWith>
+        <controls:MyIconButton />
+    </Design.PreviewWith>
+
+    <Style Selector="controls|MyIconButton">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border CornerRadius="1000" Background="{StaticResource ColorBrushSemiTransparent}" BorderThickness="0.001">
+                    <Border x:Name="PanBack" CornerRadius="1000" RenderTransformOrigin="0.5,0.5" BorderThickness="0.001" IsHitTestVisible="False">
+                        <Path x:Name="PathIcon" Stretch="Uniform" Margin="5" RenderTransformOrigin="0.5,0.5">
+                            <Path.RenderTransform>
+                                <ScaleTransform/>
+                            </Path.RenderTransform>
+                        </Path>
+                        <Border.RenderTransform>
+                            <ScaleTransform/>
+                        </Border.RenderTransform>
+                    </Border>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

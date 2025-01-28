@@ -1,0 +1,41 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:PCL2.Neo.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="45"
+             x:Class="PCL2.Neo.Controls.MyTitleBar">
+    <Grid x:Name="PanTitle" Height="48">
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="1,0" StartPoint="0,0">
+                <GradientStop Color="{StaticResource ColorObject3}" Offset="0"/>
+                <GradientStop Color="{StaticResource ColorObject2}" Offset="0.5"/>
+                <GradientStop Color="{StaticResource ColorObject3}" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        
+        <controls:MyIconButton x:Name="BtnTitleClose" HorizontalAlignment="Right" Height="28" VerticalAlignment="Center" Width="28" Margin="0,0,12,0" IconTheme="White" 
+                            LogoScale="0.72" Logo="F1 M2,0 L0,2 8,10 0,18 2,20 10,12 18,20 20,18 12,10 20,2 18,0 10,8 2,0Z" />
+        <controls:MyIconButton x:Name="BtnTitleMin" HorizontalAlignment="Right" Height="28" VerticalAlignment="Center" Width="28" Margin="0,0,44,0" IconTheme="White" 
+                            LogoScale="0.72" Logo="F1 M0,0 h15 v2 h-15 v-2 Z" />
+        <Grid x:Name="PanTitleMain" HorizontalAlignment="Left" Width="{Binding Width, ElementName=PanTitle, Mode=OneWay}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Path Grid.Column="0" x:Name="ShapeTitleLogo" Data="M26,29 v-25 h5 a7,7 180 0 1 0,14 h-5 M61,6.5 a10,11.5 180 1 0 0,18 M68,2.5 v24.5 h12 M98,2 v27 M107,2 v27" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="19,15.5,0,15.5" Stretch="Fill" Stroke="White" StrokeThickness="1.9" Width="53" />
+                <TextBlock Grid.Column="0" x:Name="LabTitleLogo" IsVisible="False" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="18,0,0,0" Foreground="White" FontSize="17" VerticalAlignment="Center" />
+                <Image Grid.Column="0" x:Name="ImageTitleLogo" IsVisible="False" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="7" VerticalAlignment="Center" />
+                <Border x:Name="NeoLogo" Grid.Column="1" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="12,0,0,0" Background="White" CornerRadius="5" Height="20" Width="35">
+                    <TextBlock Text="Neo" Foreground="{DynamicResource ColorBrush2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>
