@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
 using Avalonia.Media;
+using PCL2.Neo.Models;
 using PCL2.Neo.Utils;
 
 namespace PCL2.Neo.Controls;
@@ -85,7 +86,7 @@ public class MyIconButton : TemplatedControl
         {
             if (_panBack.Background is null)
             {
-                _panBack.Background = new SolidColorBrush(new Color(0,255,255,255));
+                _panBack.Background = (SolidColorBrush)new MyColor(0,255,255,255);
             }
             
             
@@ -94,10 +95,10 @@ public class MyIconButton : TemplatedControl
                 switch (IconTheme)
                 {
                     case IconThemes.Red: 
-                        _pathIcon.Fill = new SolidColorBrush(new Color(160, 255, 76, 76));
+                        _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 255, 76, 76);
                         break;
                     case IconThemes.Black:
-                        _pathIcon.Fill = new SolidColorBrush(new Color(160, 0, 0, 0));
+                        _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 0, 0, 0);
                         break;
                 }
             }
@@ -110,13 +111,13 @@ public class MyIconButton : TemplatedControl
                         _pathIcon.Fill = Application.Current!.Resources["ColorBrush2"] as SolidColorBrush;
                         break;
                     case IconThemes.White:
-                        _panBack.Background = new SolidColorBrush(new Color(50, 255, 255, 255));
+                        _panBack.Background = (SolidColorBrush)new MyColor(50, 255, 255, 255);
                         break;
                     case IconThemes.Red:
-                        _pathIcon.Fill = new SolidColorBrush(new Color(255, 76, 76, 76));
+                        _pathIcon.Fill = (SolidColorBrush)new MyColor(76, 76, 76);
                         break;
                     case IconThemes.Black:
-                        _pathIcon.Fill = new SolidColorBrush(new Color(230, 0, 0, 0));
+                        _pathIcon.Fill = (SolidColorBrush)new MyColor(230, 0, 0, 0);
                         break;
                 }
             }
@@ -126,18 +127,20 @@ public class MyIconButton : TemplatedControl
                 {
                     case IconThemes.Color:
                         _pathIcon.Fill = Application.Current!.Resources["ColorBrush4"] as SolidColorBrush;
+                        _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
                         break;
                     case IconThemes.White:
-                        _pathIcon.Fill = new SolidColorBrush(new Color(255, 234, 242, 254));
-                        _panBack.Background = new SolidColorBrush(new Color(0, 255, 255, 255));
+                        //_pathIcon.Fill = Application.Current!.Resources["ColorBrush8"] as SolidColorBrush;
+                        _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 255, 255, 255);
+                        _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
                         break;
                     case IconThemes.Red:
-                        _pathIcon.Fill = new SolidColorBrush(new Color(160, 255, 76, 76));
-                        _panBack.Background = new SolidColorBrush(new Color(0, 255, 255, 255));
+                        _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 255, 76, 76);
+                        _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
                         break;
                     case IconThemes.Black:
-                        _pathIcon.Fill = new SolidColorBrush(new Color(160, 0, 0, 0));
-                        _panBack.Background = new SolidColorBrush(new Color(0, 255, 255, 255));
+                        _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 0, 0, 0);
+                        _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
                         break;
                 }
             }
@@ -150,15 +153,16 @@ public class MyIconButton : TemplatedControl
                     _pathIcon.Fill = Application.Current!.Resources["ColorBrush5"] as SolidColorBrush;
                     break;
                 case IconThemes.White:
-                    _pathIcon.Fill = new SolidColorBrush(new Color(255, 234, 242, 254));
+                    _pathIcon.Fill = Application.Current!.Resources["ColorBrush8"] as SolidColorBrush;
                     break;
                 case IconThemes.Red:
-                    _pathIcon.Fill = new SolidColorBrush(new Color(160, 255, 76, 76));
+                    _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 255, 76, 76);
                     break;
                 case IconThemes.Black:
-                    _pathIcon.Fill = new SolidColorBrush(new Color(160, 0, 0, 0));
+                    _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 0, 0, 0);
                     break;
             }
+            _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
         }
     }
 }
