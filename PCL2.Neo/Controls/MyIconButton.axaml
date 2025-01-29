@@ -9,8 +9,8 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Border CornerRadius="1000" Background="{StaticResource ColorBrushSemiTransparent}" BorderThickness="0.001">
-                    <Border Name="PanBack" CornerRadius="1000" BorderThickness="0.001" IsHitTestVisible="False">
-                        <Path Name="PathIcon" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" >
+                    <Border Name="PanBack" CornerRadius="1000" RenderTransformOrigin="50%,50%" BorderThickness="0.001" IsHitTestVisible="False">
+                        <Path Name="PathIcon" Stretch="Uniform" RenderTransformOrigin="50%,50%" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" >
                             <Path.RenderTransform>
                                 <ScaleTransform/>
                             </Path.RenderTransform>

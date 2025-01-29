@@ -7,7 +7,7 @@
              x:Class="PCL2.Neo.Controls.MyTitleBar">
     <Grid Name="PanTitle" Height="48">
         <Grid.Background>
-            <LinearGradientBrush EndPoint="1,0" StartPoint="0,0">
+            <LinearGradientBrush EndPoint="100%,0%" StartPoint="0%,0%">
                 <GradientStop Color="{StaticResource ColorObject3}" Offset="0"/>
                 <GradientStop Color="{StaticResource ColorObject2}" Offset="0.5"/>
                 <GradientStop Color="{StaticResource ColorObject3}" Offset="1"/>
@@ -24,23 +24,19 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Path Grid.Column="0" Name="ShapeTitleLogo" Data="M26,29 v-25 h5 a7,7 180 0 1 0,14 h-5 M61,6.5 a10,11.5 180 1 0 0,18 M68,2.5 v24.5 h12 M98,2 v27 M107,2 v27" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="19,15.5,0,15.5" Stretch="Fill" Stroke="White" StrokeThickness="1.9" Width="53" />
-                <TextBlock Grid.Column="0" Name="LabTitleLogo" IsVisible="False" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="18,0,0,0" Foreground="White" FontSize="17" VerticalAlignment="Center" />
-                <Image Grid.Column="0" Name="ImageTitleLogo" IsVisible="False" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="7" VerticalAlignment="Center" />
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Border Name="NeoLogo" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="12,0,0,0" Background="White" CornerRadius="5" Height="20" Width="32">
+            <StackPanel Grid.Column="0" Name="PanTitleLogo" Orientation="Horizontal">
+                <Path Name="ShapeTitleLogo" Data="M26,29 v-25 h5 a7,7 180 0 1 0,14 h-5 M61,6.5 a10,11.5 180 1 0 0,18 M68,2.5 v24.5 h12 M98,2 v27 M107,2 v27" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="19,15.5,0,15.5" Stretch="Fill" Stroke="White" StrokeThickness="1.9" Width="53" />
+                <TextBlock Name="LabTitleLogo" IsVisible="False" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="18,0,0,0" Foreground="White" FontSize="17" VerticalAlignment="Center" />
+                <Image Name="ImageTitleLogo" IsVisible="False" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="7" VerticalAlignment="Center" />
+                <StackPanel  Orientation="Horizontal">
+                    <Border Name="NeoTitleLogo" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="12,0,0,0" Background="White" CornerRadius="5" Height="20" Width="32">
                         <TextBlock Text="Neo" Foreground="{DynamicResource ColorBrush2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
-                    <Border Name="DevLogo" IsVisible="True" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="8,0,0,0" Background="Yellow" CornerRadius="5" Height="20" Width="32">
+                    <Border Name="DevTitleLogo" IsVisible="True" UseLayoutRounding="False" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="8,0,0,0" Background="Yellow" CornerRadius="5" Height="20" Width="32">
                         <TextBlock Text="Dev" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                 </StackPanel>
-            </Grid>
+            </StackPanel>
             <StackPanel Grid.Column="1" Name="PanTitleSelect" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="27" Orientation="Horizontal" Margin="13,0">
                 <controls:MyRadioButton x:Name="BtnTitleSelect0" Text="{DynamicResource LangTitleHome}" Tag="0" Margin="5,0" Checked="True" Padding="2,0"
                                         LogoScale="0.95" Logo="M985.403 552.96C985.403 812.702 773.041 1024 512 1024S38.597 812.702 38.597 552.96c0-158.208 79.163-304.955 211.771-392.625 31.074-20.52 72.94-11.973 93.46 19.101s12.012 72.94-19.062 93.46c-94.681 62.622-151.237 167.306-151.237 280.064 0 185.344 151.788 336.108 338.471 336.108S850.471 738.304 850.471 552.96c0-114.649-57.974-220.278-155.096-282.585-31.35-20.125-40.448-61.833-20.362-93.184s61.794-40.448 93.184-20.4c135.995 87.236 217.206 235.362 217.206 396.169zM512 560.128c37.258 0 67.466-30.208 67.466-67.466V67.466C579.466 30.208 549.258 0 512 0s-67.466 30.208-67.466 67.466v425.196c0 37.258 30.208 67.466 67.466 67.466z" />

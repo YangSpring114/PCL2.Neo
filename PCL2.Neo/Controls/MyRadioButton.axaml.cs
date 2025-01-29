@@ -26,6 +26,7 @@ public class MyRadioButton : TemplatedControl
         
         _shapeLogo.Data = Geometry.Parse(Logo);
         _shapeLogo.RenderTransform = new ScaleTransform { ScaleX = LogoScale, ScaleY = LogoScale };
+        _labText.Text = Text;
     }
 
     public int Uuid = CoreUtils.GetUuid();
@@ -118,6 +119,10 @@ public class MyRadioButton : TemplatedControl
                 _shapeLogo.Fill = Application.Current!.Resources["ColorBrush3"] as SolidColorBrush;
                 _labText.Foreground = Application.Current!.Resources["ColorBrush2"] as SolidColorBrush;
                 this.Background = new SolidColorBrush(new Color(255, 255, 255, 255));
+            }
+            else if (_isMouseDown)
+            {
+                 this.Background = new SolidColorBrush(new Color(255, 255, 255, 255));
             }
         }
         else
