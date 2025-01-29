@@ -10,7 +10,7 @@
         Icon="/Assets/avalonia-logo.ico"
         Width="850" Height="500" MinHeight="470" MinWidth="810"
         ScrollViewer.VerticalScrollBarVisibility="Disabled"
-        ExtendClientAreaToDecorationsHint="True" ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaToDecorationsHint="True" ExtendClientAreaChromeHints="NoChrome" ExtendClientAreaTitleBarHeightHint="-1"
         Title="PCL2 Neo">
 
     <Design.DataContext>
@@ -19,13 +19,13 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <Grid>
+    <Grid UseLayoutRounding="False">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         
-        <controls:MyTitleBar Grid.Row="0"/>
+        <controls:MyTitleBar Grid.Row="0" PointerPressed="TitleBar_OnPointerPressed"/>
     </Grid>
   
     
