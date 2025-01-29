@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PCL2.Neo")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e2920b50dbfd8234a5ed1c51d9ce7f59f05675d9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4f52ee3d1f844e6adc4bc16ed54f27624e57dbbf")]
 [assembly: System.Reflection.AssemblyProductAttribute("PCL2.Neo")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PCL2.Neo")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
