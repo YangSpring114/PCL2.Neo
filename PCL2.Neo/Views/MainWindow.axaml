@@ -11,7 +11,7 @@
         Width="850" Height="500" MinHeight="470" MinWidth="810"
         ScrollViewer.VerticalScrollBarVisibility="Disabled"
         ExtendClientAreaToDecorationsHint="True" ExtendClientAreaChromeHints="NoChrome" ExtendClientAreaTitleBarHeightHint="-1"
-        SystemDecorations="None"
+        SystemDecorations="None" Background="Transparent"
         Title="PCL2 Neo">
 
     <Design.DataContext>
@@ -21,12 +21,125 @@
     </Design.DataContext>
 
     <Grid Name="PanBack" UseLayoutRounding="True" Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+        <Rectangle Name="ResizerT" Stroke="{x:Null}" StrokeThickness="0.0001" Height="8" VerticalAlignment="Top" 
+                   Margin="13,0" Cursor="SizeNorthSouth">
+            <Rectangle.Fill>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#21000000" Offset="1" />
+                    <GradientStop Color="#11000000" Offset="0.7" />
+                    <GradientStop Color="#00000000" Offset="0" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle Name="ResizerB" Stroke="{x:Null}" StrokeThickness="0.0001" Height="8" VerticalAlignment="Bottom"
+                   Margin="13,0" Cursor="SizeNorthSouth">
+            <Rectangle.Fill>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#21000000" Offset="0" />
+                    <GradientStop Color="#11000000" Offset="0.3" />
+                    <GradientStop Color="#00000000" Offset="1" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle Name="ResizerR" HorizontalAlignment="Right" Margin="0,13" Stroke="{x:Null}"
+                   StrokeThickness="0.0001" Width="8" Cursor="SizeWestEast">
+            <Rectangle.Fill>
+                <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                    <GradientStop Color="#21000000" Offset="0" />
+                    <GradientStop Color="#11000000" Offset="0.3" />
+                    <GradientStop Color="#00000000" Offset="1" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle Name="ResizerL" HorizontalAlignment="Left" Stroke="{x:Null}" Width="8" Margin="0,13"
+                   StrokeThickness="0.0001" Cursor="SizeWestEast">
+            <Rectangle.Fill>
+                <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                    <GradientStop Color="#21000000" Offset="1" />
+                    <GradientStop Color="#11000000" Offset="0.7" />
+                    <GradientStop Color="#00000000" Offset="0" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle Name="ResizerLt" HorizontalAlignment="Left" Stroke="{x:Null}" Width="13" StrokeThickness="0.0001"
+                   VerticalAlignment="Top" Height="13" Cursor="SizeAll">
+            <Rectangle.Fill>
+                <RadialGradientBrush Center="1,1" GradientOrigin="1,1" RadiusX="1" RadiusY="1">
+                    <GradientStop Color="#21000000" Offset="0.2" />
+                    <GradientStop Color="#00000000" Offset="1" />
+                </RadialGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle Name="ResizerLb" HorizontalAlignment="Left" Stroke="{x:Null}" Width="13" StrokeThickness="0.0001"
+                   VerticalAlignment="Bottom" Height="13" Cursor="SizeAll">
+            <Rectangle.Fill>
+                <RadialGradientBrush Center="1,0" GradientOrigin="1,0" RadiusX="1" RadiusY="1">
+                    <GradientStop Color="#21000000" Offset="0.2" />
+                    <GradientStop Color="#00000000" Offset="1" />
+                </RadialGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle Name="ResizerRb" HorizontalAlignment="Right" Stroke="{x:Null}" Width="13" StrokeThickness="0.0001"
+                   VerticalAlignment="Bottom" Height="13" Cursor="SizeAll">
+            <Rectangle.Fill>
+                <RadialGradientBrush Center="0,0" GradientOrigin="0,0" RadiusX="1" RadiusY="1">
+                    <GradientStop Color="#21000000" Offset="0.2" />
+                    <GradientStop Color="#00000000" Offset="1" />
+                </RadialGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle Name="ResizerRt" HorizontalAlignment="Right" Stroke="{x:Null}" Width="13" StrokeThickness="0.0001"
+                   VerticalAlignment="Top" Height="13" Cursor="SizeAll">
+            <Rectangle.Fill>
+                <RadialGradientBrush Center="0,1" GradientOrigin="0,1" RadiusX="1" RadiusY="1">
+                    <GradientStop Color="#21000000" Offset="0.2" />
+                    <GradientStop Color="#00000000" Offset="1" />
+                </RadialGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Border Margin="8" Name="BorderForm">
+            <Border.Clip>
+                <RectangleGeometry RadiusX="6" RadiusY="6" />
+            </Border.Clip>
+            <Grid Name="PanForm" UseLayoutRounding="False">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Canvas Grid.Row="1" Name="ImgBack" IsHitTestVisible="False" />
+                <controls:MyTitleBar Grid.Row="0" PointerPressed="TitleBar_OnPointerPressed"/>
+                <Grid x:Name="PanLeft" Grid.Row="1" HorizontalAlignment="Left">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Rectangle Name="RectLeftBackground" Width="0" Fill="{DynamicResource ColorBrushBackgroundTransparentSidebar}" IsHitTestVisible="False" />
+                    <Rectangle Name="RectLeftShadow" Width="4" HorizontalAlignment="Left" IsHitTestVisible="False" Grid.Column="1" >
+                        <Rectangle.Fill>
+                            <LinearGradientBrush EndPoint="1,0" StartPoint="0,0" Opacity="0.085">
+                                <GradientStop Color="#000000" Offset="0"/>
+                                <GradientStop Color="#00000000" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </Grid>
+                <Grid x:Name="PanMain" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="1" Grid.IsSharedSizeScope="True" UseLayoutRounding="True">
+                        <Border x:Name="PanMainRight" UseLayoutRounding="False">
+                        </Border>
+                    </Border>
+                    <Border Grid.Column="0" Grid.IsSharedSizeScope="True" UseLayoutRounding="True">
+                        <Border x:Name="PanMainLeft" UseLayoutRounding="False">
+                        </Border>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Border>
         
-        <controls:MyTitleBar Grid.Row="0" PointerPressed="TitleBar_OnPointerPressed"/>
     </Grid>
   
     
