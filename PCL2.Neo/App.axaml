@@ -12,6 +12,10 @@
      <Application.Resources>
         <ResourceDictionary>
             
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://PCL2.Neo/Resources/Language/zh-CN.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
             <FontFamily x:Key="Pcl2English">avares://PCL2.Neo/Resources/Font.ttf#PCL English</FontFamily>
             
             <!-- 颜色表 -->
@@ -66,6 +70,9 @@
     <Application.Styles>
         <FluentTheme />
        
+        <StyleInclude Source="avares://PCL2.Neo/Controls/MyIconButton.axaml" />
+        <StyleInclude Source="avares://PCL2.Neo/Controls/MyRadioButton.axaml" />
+        
         <!-- TextBlock -->
         <Style Selector="TextBlock">
             <Setter Property="FontSize" Value="13" />

@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 
 namespace PCL2.Neo.Views
 {
@@ -7,6 +8,14 @@ namespace PCL2.Neo.Views
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void TitleBar_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            {
+                BeginMoveDrag(e);
+            }
         }
     }
 }
