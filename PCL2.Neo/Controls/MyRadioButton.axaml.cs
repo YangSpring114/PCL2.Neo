@@ -3,6 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
 using Avalonia.Media;
+using PCL2.Neo.Helpers;
+using PCL2.Neo.Models;
 using PCL2.Neo.Utils;
 
 namespace PCL2.Neo.Controls;
@@ -114,20 +116,91 @@ public class MyRadioButton : TemplatedControl
         if (_shapeLogo is null || _labText is null) return;
         if (IsLoaded)
         {
-            if (Checked)
+            switch (ColorType)
             {
-                _shapeLogo.Fill = Application.Current!.Resources["ColorBrush3"] as SolidColorBrush;
-                _labText.Foreground = Application.Current!.Resources["ColorBrush2"] as SolidColorBrush;
-                this.Background = new SolidColorBrush(new Color(255, 255, 255, 255));
-            }
-            else if (_isMouseDown)
-            {
-                 this.Background = new SolidColorBrush(new Color(255, 255, 255, 255));
+                case ColorState.White:
+                    if (Checked)
+                    {
+                        _shapeLogo.Fill = (IBrush?)Application.Current!.Resources["ColorBrush3"];
+                        _labText.Foreground = (IBrush?)Application.Current!.Resources["ColorBrush3"] ;
+                        this.Background = (SolidColorBrush)new MyColor(255, 255, 255);
+                    }
+                    else if (_isMouseDown)
+                    {
+                        this.Background = (SolidColorBrush)new MyColor(120, ThemeHelper.Color8);
+                    }
+                    else if (IsPointerOver)
+                    {
+                        _shapeLogo.Fill = (SolidColorBrush)new MyColor(255, 255, 255);
+                        _labText.Foreground = (SolidColorBrush)new MyColor(255, 255, 255);
+                        this.Background = (SolidColorBrush)new MyColor(50, ThemeHelper.Color8);
+                    }
+                    else
+                    {
+                        _shapeLogo.Fill = (SolidColorBrush)new MyColor(255, 255, 255);
+                        _labText.Foreground = (SolidColorBrush)new MyColor(255, 255, 255);
+                        this.Background = (SolidColorBrush)ThemeHelper.ColorSemiTransparent;
+                    }
+                    break;
+                case ColorState.HighLight:
+                    if (Checked)
+                    {
+                        _shapeLogo.Fill = (SolidColorBrush)new MyColor(255, 255, 255);
+                        _labText.Foreground = (SolidColorBrush)new MyColor(255, 255, 255);
+                        this.Background = (IBrush?)Application.Current!.Resources["ColorBrush3"];
+                    }
+                    else if (_isMouseDown)
+                    {
+                        this.Background = (IBrush?)Application.Current!.Resources["ColorBrush6"];
+                    }
+                    else if (IsPointerOver)
+                    {
+                        _shapeLogo.Fill = (IBrush?)Application.Current!.Resources["ColorBrush3"];
+                        _labText.Foreground = (IBrush?)Application.Current!.Resources["ColorBrush3"];
+                        this.Background = (IBrush?)Application.Current!.Resources["ColorBrush7"];
+                    }
+                    else
+                    {
+                        _shapeLogo.Fill = (IBrush?)Application.Current!.Resources["ColorBrush3"];
+                        _labText.Foreground = (IBrush?)Application.Current!.Resources["ColorBrush3"];
+                        this.Background = (SolidColorBrush)ThemeHelper.ColorSemiTransparent;
+                    }
+                    break;
             }
         }
         else
         {
-            
+            switch (ColorType)
+            {
+                case ColorState.White:
+                    if (Checked)
+                    {
+                        this.Background = (SolidColorBrush)new MyColor(255, 255, 255);
+                        _shapeLogo.Fill = (IBrush?)Application.Current!.Resources["ColorBrush3"];
+                        _labText.Foreground = (IBrush?)Application.Current!.Resources["ColorBrush3"];
+                    }
+                    else
+                    {
+                        this.Background = (SolidColorBrush)ThemeHelper.ColorSemiTransparent;
+                        _shapeLogo.Fill = (SolidColorBrush)new MyColor(255, 255, 255);
+                        _labText.Foreground = (SolidColorBrush)new MyColor(255, 255, 255);
+                    }
+                    break;
+                case ColorState.HighLight:
+                    if (Checked)
+                    {
+                        this.Background = (IBrush?)Application.Current!.Resources["ColorBrush3"];
+                        _shapeLogo.Fill = (SolidColorBrush)new MyColor(255, 255, 255);
+                        _labText.Foreground = (SolidColorBrush)new MyColor(255, 255, 255);
+                    }
+                    else
+                    {
+                        this.Background = (SolidColorBrush)ThemeHelper.ColorSemiTransparent;
+                        _shapeLogo.Fill = (IBrush?)Application.Current!.Resources["ColorBrush3"];
+                        _labText.Foreground = (IBrush?)Application.Current!.Resources["ColorBrush3"];
+                    }
+                    break;
+            }
         }
     }
 }

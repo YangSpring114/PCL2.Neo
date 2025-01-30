@@ -1,24 +1,25 @@
-<Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="PCL2.Neo.App"
-             xmlns:local="using:PCL2.Neo"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+<Application
+    RequestedThemeVariant="Default"
+    x:Class="PCL2.Neo.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:local="using:PCL2.Neo"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
 
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <local:ViewLocator />
     </Application.DataTemplates>
-  
-     <Application.Resources>
+
+    <Application.Resources>
         <ResourceDictionary>
-            
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="avares://PCL2.Neo/Resources/Language/zh-CN.axaml" />
             </ResourceDictionary.MergedDictionaries>
-            
+
             <FontFamily x:Key="Pcl2English">avares://PCL2.Neo/Resources/Font.ttf#PCL English</FontFamily>
-            
-            <!-- 颜色表 -->
+
+            <!--  颜色表  -->
             <SolidColorBrush x:Key="ColorBrush1">#343d4a</SolidColorBrush>
             <SolidColorBrush x:Key="ColorBrush2">#0b5bcb</SolidColorBrush>
             <SolidColorBrush x:Key="ColorBrush3">#1370f3</SolidColorBrush>
@@ -58,29 +59,28 @@
             <SolidColorBrush x:Key="ColorBrushRedBack">#80fbdddd</SolidColorBrush>
             <SolidColorBrush x:Key="ColorBrushRedLight">#ff4c4c</SolidColorBrush>
             <SolidColorBrush x:Key="ColorBrushRedDark">#ce2111</SolidColorBrush>
-            <SolidColorBrush x:Key="ColorBrushHalfWhite" Color="#55ffffff" />
-            <SolidColorBrush x:Key="ColorBrushSemiWhite" Color="#bbffffff" />
-            <SolidColorBrush x:Key="ColorBrushWhite" Color="#ffffff" />
-            <SolidColorBrush x:Key="ColorBrushTransparent" Color="Transparent" />
+            <SolidColorBrush Color="#55ffffff" x:Key="ColorBrushHalfWhite" />
+            <SolidColorBrush Color="#bbffffff" x:Key="ColorBrushSemiWhite" />
+            <SolidColorBrush Color="#ffffff" x:Key="ColorBrushWhite" />
+            <SolidColorBrush Color="Transparent" x:Key="ColorBrushTransparent" />
             <SolidColorBrush x:Key="ColorBrushSemiTransparent">#01eaf2fe</SolidColorBrush>
-            <SolidColorBrush x:Key="ColorBrushBackgroundTransparentSidebar" Color="#D2FFFFFF" />
+            <SolidColorBrush Color="#D2FFFFFF" x:Key="ColorBrushBackgroundTransparentSidebar" />
         </ResourceDictionary>
-    </Application.Resources>         
-             
+    </Application.Resources>
+
     <Application.Styles>
         <FluentTheme />
-       
+
         <StyleInclude Source="avares://PCL2.Neo/Controls/MyIconButton.axaml" />
         <StyleInclude Source="avares://PCL2.Neo/Controls/MyRadioButton.axaml" />
-        
-        <!-- TextBlock -->
+
+        <!--  TextBlock  -->
         <Style Selector="TextBlock">
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Foreground" Value="{DynamicResource ColorBrush1}" />
-            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
             <Setter Property="FontFamily" Value="{StaticResource Pcl2English}" />
         </Style>
     </Application.Styles>
 
-   
+
 </Application>

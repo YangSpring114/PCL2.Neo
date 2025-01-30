@@ -176,9 +176,9 @@ public class MyColor
             double l = sL / 100;
             s = l < 0.5 ? s * l + l : s * (1.0 - l) + l;
             l = 2 * l - s;
-            R = 255 * Hue(l, s, h + 1 / 3);
+            R = 255 * Hue(l, s, h + 1 / 3.0);
             G = 255 * Hue(l, s, h);
-            B = 255 * Hue(l, s, h - 1 / 3);
+            B = 255 * Hue(l, s, h - 1 / 3.0);
         }
         A = 255;
         return this;
@@ -202,9 +202,13 @@ public class MyColor
                 +0.05, -0.12, -0.02, // 270, 300, 330
                 +0.1, -0.06}; // 最后两位与前两位一致，加是变亮，减是变暗
             double center = sH / 30.0;
-            int intCenter = (int)Math.Floor(center);
-            center = 50 - ((1 - center + intCenter) * cent[intCenter] + (center - intCenter) * cent[intCenter + 1]) * sS;
+            int intCenter = (int)Math.Floor(center);  // 亮度片区编号
+            center = 50 - (
+                (1 - center + intCenter) * cent[intCenter] + (center - intCenter) * cent[intCenter + 1]
+            ) * sS;
+
             sL = sL < center ? sL / center : 1 + (sL - center) / (100 - center);
+            sL *= 50;
             FromHsl(sH, sS, sL);
         }
         A = 255;
