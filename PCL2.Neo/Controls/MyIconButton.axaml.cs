@@ -108,7 +108,7 @@ public class MyIconButton : TemplatedControl
                 switch (IconTheme)
                 {
                     case IconThemes.Color:
-                        _pathIcon.Fill = Application.Current!.Resources["ColorBrush2"] as SolidColorBrush;
+                        _pathIcon.Fill = (IBrush?)Application.Current!.Resources["ColorBrush2"];
                         break;
                     case IconThemes.White:
                         _panBack.Background = (SolidColorBrush)new MyColor(50, 255, 255, 255);
@@ -126,12 +126,11 @@ public class MyIconButton : TemplatedControl
                 switch (IconTheme)
                 {
                     case IconThemes.Color:
-                        _pathIcon.Fill = Application.Current!.Resources["ColorBrush4"] as SolidColorBrush;
+                        _pathIcon.Fill = (IBrush?)Application.Current!.Resources["ColorBrush4"];
                         _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
                         break;
                     case IconThemes.White:
-                        //_pathIcon.Fill = Application.Current!.Resources["ColorBrush8"] as SolidColorBrush;
-                        _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 255, 255, 255);
+                        _pathIcon.Fill = (IBrush?)Application.Current!.Resources["ColorBrush8"];
                         _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
                         break;
                     case IconThemes.Red:
