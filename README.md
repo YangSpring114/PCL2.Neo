@@ -10,7 +10,7 @@
 - **跨平台**：借助于强大的 **Avalonia** 框架，你可以在 Windows、Linux 和 macOS 上体验 PCL2.Neo！
 - **像素级还原**：PCL2.Neo 的界面，功能与原版 PCL2 几乎一致。
 - **原生运行**：不像**某些启动器**使用部分基于 Web 的跨平台技术（Tauri，Electron，NW.js...），PCL2.Neo 是原生自绘控件，自然快！
-- **没有赞助**：PCL2.Neo 提供了**无需任何赞助**的自定义主题功能，并且任何功能都不需要**赞助**！当然，你愿意的话可以捐助我们。
+- **没有赞助**：PCL2.Neo 的任何功能都不需要**赞助**！当然，你愿意的话可以捐助我们。
 
 ## 急需开发人员！
 目前 PCL2.Neo 的开发仅由 [Hill23333](https://github.com/Hill23333) 与 [SALTWO∅D](https://github.com/SALTWOOD) 贡献。
