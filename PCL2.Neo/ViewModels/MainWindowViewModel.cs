@@ -1,25 +1,27 @@
 ﻿using Avalonia.Controls;
-using CommunityToolkit.Mvvm.Input;
 
 namespace PCL2.Neo.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
-        private Window _window;
-        
+        private Window? _window;
+
+        // 为了设计时的DataContext
+        public MainWindowViewModel()
+        {
+        }
         public MainWindowViewModel(Window window)
         {
             this._window = window;
         }
         
-        [RelayCommand]
         public void Close()
         {
-            _window.Close();
+            _window?.Close();
         }
-        [RelayCommand]
         public void Minimize()
         {
+            if (_window is null) return;
             _window.WindowState = WindowState.Minimized;
         }
     }
