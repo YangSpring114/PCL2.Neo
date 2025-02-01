@@ -14,10 +14,10 @@
         <ResourceDictionary>
 
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="avares://PCL2.Neo/Resources/Language/zh-CN.axaml" />
+                <ResourceInclude Source="avares://PCL2.Neo/Assets/Language/zh-CN.axaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <FontFamily x:Key="Pcl2English">avares://PCL2.Neo/Resources/Font.ttf#PCL English</FontFamily>
+            <FontFamily x:Key="Pcl2English">avares://PCL2.Neo/Assets/Font.ttf#PCL English</FontFamily>
 
             <!--  颜色表  -->
             <SolidColorBrush x:Key="ColorBrush1">#343d4a</SolidColorBrush>

@@ -1,7 +1,10 @@
-﻿using Avalonia;
+﻿using System;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using PCL2.Neo.Models;
 using PCL2.Neo.Utils;
@@ -19,14 +22,25 @@ public class MyIconButton : TemplatedControl
         _pathIcon = e.NameScope.Find<Path>("PathIcon")!;
         _panBack = e.NameScope.Find<Border>("PanBack")!;
         
+        // 事件
         this.PointerEntered += (_, _) => RefreshColor();
         this.PointerExited += (_, _) => RefreshColor();
+        this.PointerPressed += OnPointerPressed;
         this.Loaded += (_, _) => RefreshColor();
         
+        // 初始化
         _pathIcon.Data = Geometry.Parse(Logo);
         _pathIcon.RenderTransform = new ScaleTransform{ ScaleX = LogoScale, ScaleY = LogoScale };
     }
-    
+
+    private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        OnClick();
+        e.Handled = true;
+        // 这里缺少动画
+        // 这里缺少 PCL 的 Event
+    }
+
     public int Uuid = CoreUtils.GetUuid();
     
     public static readonly StyledProperty<string> LogoProperty = AvaloniaProperty.Register<MyIconButton, string>(
@@ -68,7 +82,8 @@ public class MyIconButton : TemplatedControl
     }
 
     public static readonly StyledProperty<IconThemes> IconThemeProperty = AvaloniaProperty.Register<MyIconButton, IconThemes>(
-        nameof(IconTheme));
+        nameof(IconTheme),
+        IconThemes.Color);
     public IconThemes IconTheme
     {
         get => GetValue(IconThemeProperty);
@@ -79,6 +94,52 @@ public class MyIconButton : TemplatedControl
         }
     }
 
+    public new static readonly StyledProperty<SolidColorBrush> ForegroundProperty = AvaloniaProperty.Register<MyIconButton, SolidColorBrush>(
+        nameof(Foreground));
+
+    public new SolidColorBrush Foreground
+    {
+        get => GetValue(ForegroundProperty);
+        set
+        {
+            SetValue(ForegroundProperty, value);
+            RefreshColor();
+        }
+    }
+
+    public static readonly StyledProperty<string> EventTypeProperty = AvaloniaProperty.Register<MyIconButton, string>(
+        nameof(EventType));
+
+    public string EventType
+    {
+        get => GetValue(EventTypeProperty);
+        set => SetValue(EventTypeProperty, value);
+    }
+
+    public static readonly StyledProperty<string> EventDataProperty = AvaloniaProperty.Register<MyIconButton, string>(
+        nameof(EventData));
+
+    public string EventData
+    {
+        get => GetValue(EventDataProperty);
+        set => SetValue(EventDataProperty, value);
+    }
+    
+    public static readonly RoutedEvent<RoutedEventArgs> ClickEvent = RoutedEvent.Register<MyIconButton, RoutedEventArgs>(
+        nameof(Click),
+        RoutingStrategies.Bubble);
+    
+    public event EventHandler<RoutedEventArgs> Click
+    {
+        add => AddHandler(ClickEvent, value);
+        remove => RemoveHandler(ClickEvent, value);
+    }
+    
+    protected virtual void OnClick()
+    {
+        RaiseEvent(new RoutedEventArgs(ClickEvent));
+    }
+    
     private void RefreshColor()
     {
         if (_pathIcon is null || _panBack is null) return;
@@ -88,8 +149,6 @@ public class MyIconButton : TemplatedControl
             {
                 _panBack.Background = (SolidColorBrush)new MyColor(0,255,255,255);
             }
-            
-            
             if (_pathIcon.Fill is null)
             {
                 switch (IconTheme)
@@ -99,6 +158,9 @@ public class MyIconButton : TemplatedControl
                         break;
                     case IconThemes.Black:
                         _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 0, 0, 0);
+                        break;
+                    case IconThemes.Custom:
+                        _pathIcon.Fill = (SolidColorBrush)new MyColor(160, Foreground);
                         break;
                 }
             }
@@ -118,6 +180,9 @@ public class MyIconButton : TemplatedControl
                         break;
                     case IconThemes.Black:
                         _pathIcon.Fill = (SolidColorBrush)new MyColor(230, 0, 0, 0);
+                        break;
+                    case IconThemes.Custom:
+                        _pathIcon.Fill = (SolidColorBrush)new MyColor(255, Foreground);
                         break;
                 }
             }
@@ -141,6 +206,10 @@ public class MyIconButton : TemplatedControl
                         _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 0, 0, 0);
                         _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
                         break;
+                    case IconThemes.Custom:
+                        _pathIcon.Fill = (SolidColorBrush)new MyColor(160, Foreground);
+                        _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
+                        break;
                 }
             }
         }
@@ -159,6 +228,9 @@ public class MyIconButton : TemplatedControl
                     break;
                 case IconThemes.Black:
                     _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 0, 0, 0);
+                    break;
+                case IconThemes.Custom:
+                    _pathIcon.Fill = (SolidColorBrush)new MyColor(160, Foreground);
                     break;
             }
             _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
