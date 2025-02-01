@@ -1,7 +1,12 @@
-# PCL 2 Neo
+<div align=center>
+
+<img alt="Logo" src="/Assets/Icon.png" width="256" height="256">
+
+# PCL2.Neo ![GitHub License](https://img.shields.io/github/license/PCL-Community/PCL2.Neo) ![GitHub Repo stars](https://img.shields.io/github/stars/PCL-Community/PCL2.Neo)
 
 **真正的跨平台 PCL2，来了。**
 
+</div>
 基于 Avalonia 的下一代跨平台启动器，由 [PCL2](https://github.com/Hex-Dragon/PCL2)（作者：龙腾猫跃） 项目重构。\
 使用最新的 .NET 9 强力驱动，支持 Windows、Linux 和 macOS。\
 原生运行，自然快！
