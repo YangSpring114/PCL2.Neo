@@ -2,7 +2,7 @@
     Background="Transparent"
     CanResize="False"
     Height="500"
-    Icon="/Assets/avalonia-logo.ico"
+    Icon="/Assets/Icon.ico"
     MinHeight="470"
     MinWidth="810"
     ScrollViewer.VerticalScrollBarVisibility="Disabled"
