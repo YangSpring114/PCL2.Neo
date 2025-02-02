@@ -10,6 +10,7 @@
         <entry key="PCL2.Neo/Controls/MyIconButton.axaml" value="PCL2.Neo/PCL2.Neo.csproj" />
         <entry key="PCL2.Neo/Controls/MyRadioButton.axaml" value="PCL2.Neo/PCL2.Neo.csproj" />
         <entry key="PCL2.Neo/Controls/MyTitleBar.axaml" value="PCL2.Neo/PCL2.Neo.csproj" />
+        <entry key="PCL2.Neo/Controls/Style/ListBoxStyle.axaml" value="PCL2.Neo/PCL2.Neo.csproj" />
         <entry key="PCL2.Neo/Resources/Language/zh-CN.axaml" value="PCL2.Neo/PCL2.Neo.csproj" />
         <entry key="PCL2.Neo/Views/MainWindow.axaml" value="PCL2.Neo/PCL2.Neo.csproj" />
       </map>
