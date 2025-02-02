@@ -25,21 +25,25 @@ public class MyIconButton : TemplatedControl
         // 事件
         this.PointerEntered += (_, _) => RefreshColor();
         this.PointerExited += (_, _) => RefreshColor();
-        this.PointerPressed += OnPointerPressed;
+        //this.PointerReleased += OnPointerReleased;
+        //this.AddHandler(PointerReleasedEvent, OnPointerReleased, RoutingStrategies.Bubble, true);
         this.Loaded += (_, _) => RefreshColor();
         
         // 初始化
         _pathIcon.Data = Geometry.Parse(Logo);
         _pathIcon.RenderTransform = new ScaleTransform{ ScaleX = LogoScale, ScaleY = LogoScale };
     }
-
-    private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    
+    protected override void OnPointerReleased(PointerReleasedEventArgs pointerReleasedEventArgs)
     {
-        OnClick();
-        e.Handled = true;
-        // 这里缺少动画
-        // 这里缺少 PCL 的 Event
+        if (pointerReleasedEventArgs.InitialPressMouseButton == MouseButton.Left)
+        {
+            OnClick();
+            // 这里缺少动画
+            // 这里缺少 PCL 的 Event
+        }
     }
+
 
     public int Uuid = CoreUtils.GetUuid();
     
