@@ -83,12 +83,10 @@ public static class CollectionUtils
         }
         return newList;
     }
-    public delegate bool CompareThreadStart<T>(T Left, T Right);
+    public delegate bool CompareThreadStart<T>(T left, T right);
 
     private class MyEqual<T>(CompareThreadStart<T> method) : IEqualityComparer<T>
     {
-        private CompareThreadStart<T> method = method;
-
         public bool Equals(T? x, T? y)
         {
             return method(x, y);
@@ -125,7 +123,7 @@ public static class CollectionUtils
     /// </summary>
     public static List<T> Distinct<T>(this ICollection<T> arr, CompareThreadStart<T> isEqual)
     {
-        return new List<T>(arr.Distinct(new MyEqual<T>(isEqual)));
+        return [..arr.Distinct(new MyEqual<T>(isEqual))];
     }
 
     /// <summary>
@@ -133,6 +131,6 @@ public static class CollectionUtils
     /// </summary>
     public static IList<T> Clone<T>(this IList<T> list)
     {
-        return new List<T>(list);
+        return (List<T>) [..list];
     }
 }
