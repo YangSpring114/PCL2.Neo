@@ -18,12 +18,7 @@ namespace PCL2.Neo.Models.Minecraft
         public string JavaExe => Path + "java.exe";
         public string JavaWExe => Path + "javaw.exe";
         public bool IsJdk => File.Exists(Path + "\\javac.exe");
-
-        public bool IsExist()
-        {
-            return Directory.Exists(Path);
-        }
-
+        public bool IsExist { set; get; }
         public bool Is64Bit { get; set; }
 
         private bool SetVersion(string version)

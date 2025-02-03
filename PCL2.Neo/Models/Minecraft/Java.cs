@@ -2,9 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PCL2.Neo.Models.Minecraft
 {
+    internal class JavaExist
+    {
+        public bool IsExist { get; set; }
+        public string Path { get; set; }
+    }
+
     public class Java
     {
         private static List<JavaEntity> Windows()
@@ -13,20 +20,28 @@ namespace PCL2.Neo.Models.Minecraft
 
             // find by environment path
             // JAVA_HOME
-            var javaPath = Environment.GetEnvironmentVariable("JAVA_HOME");
-            if (javaPath == null || !Directory.Exists(javaPath)) return javaList;
+            var javaHomePath = Environment.GetEnvironmentVariable("JAVA_HOME");
+            if (javaHomePath == null || !Directory.Exists(javaHomePath)) return javaList;
 
-            var exePath = Path.Combine(javaPath, "bin\\");
-            if (File.Exists(exePath))
+            var binPath = Path.Combine(javaHomePath, "bin\\");
+            if (File.Exists(binPath))
             {
-                javaList.Add(new JavaEntity(exePath));
+                javaList.Add(new JavaEntity(binPath));
             }
 
             // PATH
-            javaPath = Environment.GetEnvironmentVariable("PATH");
-            var pathItemList = javaPath.Split(';');
-            javaPath = pathItemList.FirstOrDefault(x => x.Contains("jdk"));
+            var pathItemList = Environment.GetEnvironmentVariable("PATH").Split(';');
+            var pathList = new List<JavaExist>();
+            Parallel.ForEach(pathItemList,
+                jPath =>
+                {
+                    var exePath = Path.Combine(jPath, "java.exe");
+                    var wexePath = Path.Combine(jPath, "javaw.exe");
+                    pathList.Add(new JavaExist
+                        { IsExist = File.Exists(exePath) && File.Exists(wexePath), Path = jPath });
+                });
 
+            javaList.AddRange(pathList.Where(j => j.IsExist).Select(j => new JavaEntity(j.Path)));
             return javaList;
         }
 
