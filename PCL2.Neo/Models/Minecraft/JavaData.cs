@@ -13,7 +13,7 @@ namespace PCL2.Neo.Models.Minecraft
 
     public class JavaEntity(string path)
     {
-        public string Path = path.EndsWith("bin\\") ? path : System.IO.Path.Combine(path, "bin\\");
+        public string Path = path.EndsWith('\\') ? path : path + '\\';
         public bool IsUseable = true;
         private int? _version;
 
@@ -29,8 +29,16 @@ namespace PCL2.Neo.Models.Minecraft
                 // get java version code
                 var javaVersionMatch = Regex.Match(Output, """version "([\d._]+)""");
                 var match = Regex.Match(javaVersionMatch.Success ? javaVersionMatch.Groups[1].Value : string.Empty,
-                    @"(\d+)\.");
+                    @"^(\d+)\.");
                 _version = match.Success ? int.Parse(match.Groups[1].Value) : 0;
+                if (_version == 1)
+                {
+                    match = Regex.Match(javaVersionMatch.Groups[1].Value, @"^1\.(\d+)\.");
+                    _version = match.Success ? int.Parse(match.Groups[1].Value) : 0;
+
+                    return _version.Value;
+                }
+
                 return _version.Value;
             }
         }
