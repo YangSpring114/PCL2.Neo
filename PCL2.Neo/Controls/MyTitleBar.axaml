@@ -107,7 +107,6 @@
             </StackPanel>
         </StackPanel>
         <StackPanel
-            Grid.Column="1"
             Height="27"
             HorizontalAlignment="Center"
             Margin="13,0"
