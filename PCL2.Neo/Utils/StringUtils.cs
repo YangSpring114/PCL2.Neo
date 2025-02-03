@@ -18,6 +18,14 @@ public static class StringUtils
     }
 
     /// <summary>
+    /// 高速的 IndexOf。
+    /// </summary>
+    public static int IndexOfF(this string str, string subStr,bool ignoreCase = false)
+    {
+        return str.IndexOf(subStr, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+    }
+    
+    /// <summary>
     /// 支持可变大小写判断的 Contains。
     /// </summary>
     public static bool ContainsF(this string str,string subStr,bool ignoreCase = false)
