@@ -11,6 +11,33 @@ namespace PCL2.Neo.Utils;
 public static class CollectionUtils
 {
     /// <summary>
+    /// 可以使用 Equals 和等号的 List。
+    /// </summary>
+    public class EqualableList<T> : List<T>
+    {
+        public override bool Equals(object? obj)
+        {
+            if (!(obj is List<T>)) return false; // 类型不同
+            List<T> objList = (List<T>)obj; // 类型相同
+            if (objList.Count != Count) return false;
+            for (int i = 0; i < objList.Count-1; i++)
+            {
+                if (!objList[i].Equals(this[i])) return false;
+            }
+            return true;
+        }
+
+        public static bool operator ==(EqualableList<T> left, EqualableList<T> right)
+        {
+            return EqualityComparer<EqualableList<T>>.Default.Equals(left, right);
+        }
+        public static bool operator !=(EqualableList<T> left, EqualableList<T> right)
+        {
+            return !(left == right);
+        }
+    }
+    
+    /// <summary>
     /// 线程安全的，可以直接使用 For Each 的 List。
     /// 在使用 For Each 循环时，列表的结果可能并非最新，但不会抛出异常。
     /// </summary>
