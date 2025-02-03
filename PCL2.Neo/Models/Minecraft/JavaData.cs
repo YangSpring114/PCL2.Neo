@@ -1,72 +1,94 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 
 namespace PCL2.Neo.Models.Minecraft
 {
-    // TODO: 优化：延时执行获取版本
-    public class JavaEntity
+    internal record JavaExist
     {
-        public JavaEntity(string path)
+        public required bool IsExist { get; set; }
+        public required string Path { get; set; }
+    }
+
+    public class JavaEntity(string path)
+    {
+        public string Path = path.EndsWith("bin\\") ? path : System.IO.Path.Combine(path, "bin\\");
+        public bool IsUseable = true;
+        private int? _version;
+
+        public int Version
         {
-            Path = path.EndsWith("bin\\") ? path : System.IO.Path.Combine(path, "bin\\");
-            GetJavaInfo();
+            get
+            {
+                if (_version != null)
+                {
+                    return _version.Value;
+                }
+
+                // get java version code
+                var javaVersionMatch = Regex.Match(Output, """version "([\d._]+)""");
+                var match = Regex.Match(javaVersionMatch.Success ? javaVersionMatch.Groups[1].Value : string.Empty,
+                    @"(\d+)\.");
+                _version = match.Success ? int.Parse(match.Groups[1].Value) : 0;
+                return _version.Value;
+            }
         }
 
-        public string Path { set; get; }
-        public int Version { set; get; }
         public string JavaExe => Path + "java.exe";
         public string JavaWExe => Path + "javaw.exe";
-        public bool IsJdk => File.Exists(Path + "\\javac.exe");
-        public bool IsExist { set; get; }
-        public bool Is64Bit { get; set; }
+        private string? _output;
 
-        private bool SetVersion(string version)
+        private string Output
         {
-            var match = Regex.Match(version, @"(\d+)\.");
-            Version = match.Success ? int.Parse(match.Groups[1].Value) : 0;
-
-            return match.Success;
-        }
-
-        private bool SetBit(string bit)
-        {
-            if (bit == string.Empty)
+            get
             {
-                Is64Bit = false;
-                return false;
-            }
-            else
-            {
-                Is64Bit = "64".Equals(bit);
-                return true;
+                if (_output != null)
+                {
+                    return _output;
+                }
+
+                _output = RunJava();
+                return _output;
             }
         }
 
-        public void GetJavaInfo()
+        public bool IsJre => !File.Exists(Path + "\\javac.exe");
+        public bool IsUserImport { set; get; }
+        private bool? _is64Bit;
+
+        public bool Is64Bit
         {
-            //get java output by process
+            get
+            {
+                if (_is64Bit != null)
+                {
+                    return _is64Bit.Value;
+                }
+
+                var javaBitMatch = Regex.Match(Output, @"\b(\d+)-Bit\b");
+                _is64Bit = (javaBitMatch.Success ? javaBitMatch.Groups[1].Value : string.Empty) == "64";
+                return _is64Bit.Value;
+            }
+        }
+
+        private string RunJava()
+        {
             using var javaProcess = new Process();
             javaProcess.StartInfo = new ProcessStartInfo
             {
                 FileName = JavaExe,
                 Arguments = "-version",
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                RedirectStandardError = true, // 这个Java的输出流是tmd stderr！！！
+                RedirectStandardOutput = true
             };
-
             javaProcess.Start();
-            var output = javaProcess.StandardOutput.ReadToEnd();
+            javaProcess.WaitForExit();
 
-            // get java version code
-            var javaVersionMatch = Regex.Match(output, """version "([\d._]+)""");
-            var version = javaVersionMatch.Success ? javaVersionMatch.Groups[1].Value : string.Empty;
-            SetVersion(version);
-
-            // get java bit
-            var javaBitMatch = Regex.Match(output, @"\b(\d+)-Bit\b");
-            var bit = javaBitMatch.Success ? javaBitMatch.Groups[1].Value : string.Empty;
-            SetBit(bit);
+            var output = javaProcess.StandardError.ReadToEnd(); // check stderr have content
+            return output != string.Empty ? output : javaProcess.StandardOutput.ReadToEnd(); // 就是tmd stderr
         }
     }
 }
