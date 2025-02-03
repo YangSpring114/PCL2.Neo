@@ -31,8 +31,10 @@ namespace PCL2.Neo.Models.Minecraft
                 var match = Regex.Match(javaVersionMatch.Success ? javaVersionMatch.Groups[1].Value : string.Empty,
                     @"^(\d+)\.");
                 _version = match.Success ? int.Parse(match.Groups[1].Value) : 0;
+
                 if (_version == 1)
                 {
+                    // java version 8
                     match = Regex.Match(javaVersionMatch.Groups[1].Value, @"^1\.(\d+)\.");
                     _version = match.Success ? int.Parse(match.Groups[1].Value) : 0;
 
@@ -74,7 +76,7 @@ namespace PCL2.Neo.Models.Minecraft
                     return _is64Bit.Value;
                 }
 
-                var javaBitMatch = Regex.Match(Output, @"\b(\d+)-Bit\b");
+                var javaBitMatch = Regex.Match(Output, @"\b(\d+)-Bit\b"); // get bit
                 _is64Bit = (javaBitMatch.Success ? javaBitMatch.Groups[1].Value : string.Empty) == "64";
                 return _is64Bit.Value;
             }

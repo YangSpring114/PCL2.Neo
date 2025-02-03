@@ -19,13 +19,13 @@ internal class Windows
         if (javaHomePath != null || Directory.Exists(javaHomePath)) // if not exist then return
         {
             var javaPath = javaHomePath.EndsWith("bin\\")
-                ? Path.Combine(javaHomePath, "javaw.exe")
+                ? Path.Combine(javaHomePath, "javaw.exe") // check java exe file is exist
                 : Path.Combine(javaHomePath, "bin", "javaw.exe");
             if (File.Exists(javaHomePath))
                 javaList.Add(new JavaEntity(javaHomePath));
         }
 
-        // PATH
+        // PATH multi-thread
         var pathList = new ConcurrentBag<JavaExist>();
         Parallel.ForEach(Environment.GetEnvironmentVariable("Path")!.Split(';') /* get path list */,
             new ParallelOptions
@@ -37,6 +37,7 @@ internal class Windows
                 pathList.Add(new JavaExist
                     { IsExist = File.Exists(Path.Combine(jPath, "javaw.exe")), Path = jPath });
             });
+        // select exist path
         javaList.AddRange(pathList.Where(j => j.IsExist).Select(j => new JavaEntity(j.Path)));
 
         return javaList;
@@ -59,10 +60,8 @@ internal class Windows
     {
         var entities = new List<JavaEntity>();
 
-        if (deep >= MaxDeep)
-        {
-            return entities;
-        }
+        // if too deep then return
+        if (deep >= MaxDeep) return entities;
 
         try
         {
@@ -72,12 +71,11 @@ internal class Windows
             var selectFolder = subFolder.Where(f => KeySubFolderWrods.Any(w => f.ToLower().Contains(w.ToLower())));
             //entities.AddRange(selectFolder.Select(SearchFolders).SelectMany(i => i).ToList());
             foreach (var folder in selectFolder)
-            {
-                entities.AddRange(SearchFolders(folder, deep + 1));
-            }
+                entities.AddRange(SearchFolders(folder, deep + 1)); // search sub folders
         }
         catch (UnauthorizedAccessException)
         {
+            // ignore can not access folder
         }
 
         return entities;
@@ -91,6 +89,8 @@ internal class Windows
         var readyRootFolders = readyDrive.Select(d => d.RootDirectory)
             .Where(f => !f.Attributes.HasFlag(FileAttributes.ReparsePoint));
 
+        // search java start at root folders
+        // multi-thread
         Parallel.ForEach(readyRootFolders, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
             root =>
             {
