@@ -4,5 +4,6 @@ namespace PCL2.Neo.ViewModels
 {
     public class ViewModelBase : ObservableObject
     {
+
     }
 }
