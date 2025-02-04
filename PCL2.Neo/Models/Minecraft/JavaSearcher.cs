@@ -9,7 +9,10 @@ namespace PCL2.Neo.Models.Minecraft.JavaSearcher;
 
 internal class Windows
 {
-    private static List<JavaEntity> EnvionmentJavaEntities()
+    private static Task<JavaExist> PathEnvSearchAsync(string path) => Task.Run(() => new JavaExist
+        { IsExist = File.Exists(Path.Combine(path, "javaw.exe")), Path = path });
+
+    private static async Task<List<JavaEntity>> EnvionmentJavaEntities()
     {
         var javaList = new List<JavaEntity>();
 
@@ -27,17 +30,9 @@ internal class Windows
 
         // PATH multi-thread
         var pathList = new ConcurrentBag<JavaExist>();
-        Parallel.ForEach(Environment.GetEnvironmentVariable("Path")!.Split(';') /* get path list */,
-            new ParallelOptions
-            {
-                MaxDegreeOfParallelism = Environment.ProcessorCount
-            },
-            jPath =>
-            {
-                pathList.Add(new JavaExist
-                    { IsExist = File.Exists(Path.Combine(jPath, "javaw.exe")), Path = jPath });
-            });
-        // select exist path
+        foreach (var item in Environment.GetEnvironmentVariable("Path")!.Split(';'))
+            pathList.Add(await PathEnvSearchAsync(item));
+
         javaList.AddRange(pathList.Where(j => j.IsExist).Select(j => new JavaEntity(j.Path)));
 
         return javaList;
@@ -54,7 +49,7 @@ internal class Windows
         "4297127d64ec6", "国服", "网易", "ext", "netease", "1.", "启动"
     ];
 
-    private const int MaxDeep = 6;
+    public const int MaxDeep = 6;
 
     private static List<JavaEntity> SearchFolders(string folderPath, int deep)
     {
@@ -81,7 +76,10 @@ internal class Windows
         return entities;
     }
 
-    private static List<JavaEntity> DriveJavaEntities()
+    private static Task<List<JavaEntity>> SearchFoldersAsync(string folderPath) => Task.Run(() =>
+        SearchFolders(folderPath, 0));
+
+    private static async Task<List<JavaEntity>> DriveJavaEntities()
     {
         var javaList = new ConcurrentBag<JavaEntity>();
 
@@ -91,24 +89,20 @@ internal class Windows
 
         // search java start at root folders
         // multi-thread
-        Parallel.ForEach(readyRootFolders, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
-            root =>
-            {
-                var entities = SearchFolders(root.ToString(), 0);
-                foreach (var javaEntity in entities)
-                {
-                    javaList.Add(javaEntity);
-                }
-            });
+        foreach (var item in readyRootFolders)
+        {
+            var entities = await SearchFoldersAsync(item.ToString());
+            foreach (var entity in entities) javaList.Add(entity);
+        }
 
         return javaList.ToList();
     }
 
-    public static List<JavaEntity> SearchJava()
+    public static async Task<List<JavaEntity>> SearchJava()
     {
         var javaEntities = new List<JavaEntity>();
-        javaEntities.AddRange(EnvionmentJavaEntities());
-        javaEntities.AddRange(DriveJavaEntities());
+        javaEntities.AddRange(await EnvionmentJavaEntities());
+        javaEntities.AddRange(await DriveJavaEntities());
         return javaEntities;
     }
 }
