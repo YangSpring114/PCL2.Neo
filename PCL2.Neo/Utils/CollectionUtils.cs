@@ -38,33 +38,6 @@ public static class CollectionUtils
     }
     
     /// <summary>
-    /// 线程安全的，可以直接使用 For Each 的 List。
-    /// 在使用 For Each 循环时，列表的结果可能并非最新，但不会抛出异常。
-    /// </summary>
-    public class SafeList<T> : SynchronizedCollection<T>, IEnumerable, IEnumerable<T>
-    {
-        public SafeList() : base() { }
-        public SafeList(IEnumerable<T> data) : base(new object(), data) { }
-        public static implicit operator SafeList<T>(List<T> data)
-        {
-            return new SafeList<T>(data);
-        }
-        public static implicit operator List<T>(SafeList<T> data)
-        {
-            return new List<T>(data);
-        }
-        // 基于 SyncLock 覆写
-        public new IEnumerator<T> GetEnumerator()
-        {
-            lock (SyncRoot) return Items.ToList().GetEnumerator();
-        }
-        private IEnumerator GetEnumeratorGeneral()
-        {
-            lock (SyncRoot) return Items.ToList().GetEnumerator();  
-        }
-    }
-
-    /// <summary>
     /// 按照既定的函数进行选择排序。
     /// </summary>
     /// <param name="sortRule">传入两个对象，若第一个对象应该排在前面，则返回 True。</param>
