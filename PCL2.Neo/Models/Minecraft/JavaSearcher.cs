@@ -49,7 +49,7 @@ internal class Windows
         "4297127d64ec6", "国服", "网易", "ext", "netease", "1.", "启动"
     ];
 
-    public const int MaxDeep = 6;
+    public const int MaxDeep = 7;
 
     private static List<JavaEntity> SearchFolders(string folderPath, int deep)
     {
@@ -83,7 +83,7 @@ internal class Windows
     {
         var javaList = new ConcurrentBag<JavaEntity>();
 
-        var readyDrive = DriveInfo.GetDrives().Where(d => d.IsReady && d.DriveType != DriveType.Network);
+        var readyDrive = DriveInfo.GetDrives().Where(d => d is { IsReady: true, DriveType: DriveType.Fixed });
         var readyRootFolders = readyDrive.Select(d => d.RootDirectory)
             .Where(f => !f.Attributes.HasFlag(FileAttributes.ReparsePoint));
 
