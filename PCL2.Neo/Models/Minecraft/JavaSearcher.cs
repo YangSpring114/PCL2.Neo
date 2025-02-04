@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
+#pragma warning disable CA1416
 
 namespace PCL2.Neo.Models.Minecraft.JavaSearcher;
 
@@ -20,13 +23,8 @@ internal class Windows
         // JAVA_HOME
         var javaHomePath = Environment.GetEnvironmentVariable("JAVA_HOME");
         if (javaHomePath != null || Directory.Exists(javaHomePath)) // if not exist then return
-        {
-            var javaPath = javaHomePath.EndsWith("bin\\")
-                ? Path.Combine(javaHomePath, "javaw.exe") // check java exe file is exist
-                : Path.Combine(javaHomePath, "bin", "javaw.exe");
             if (File.Exists(javaHomePath))
                 javaList.Add(new JavaEntity(javaHomePath));
-        }
 
         // PATH multi-thread
         var pathList = new ConcurrentBag<JavaExist>();
@@ -51,12 +49,12 @@ internal class Windows
 
     public const int MaxDeep = 7;
 
-    private static List<JavaEntity> SearchFolders(string folderPath, int deep)
+    private static List<JavaEntity> SearchFolders(string folderPath, int deep, int maxDeep = MaxDeep)
     {
         var entities = new List<JavaEntity>();
 
         // if too deep then return
-        if (deep >= MaxDeep) return entities;
+        if (deep >= maxDeep) return entities;
 
         try
         {
@@ -76,10 +74,10 @@ internal class Windows
         return entities;
     }
 
-    private static Task<List<JavaEntity>> SearchFoldersAsync(string folderPath) => Task.Run(() =>
-        SearchFolders(folderPath, 0));
+    private static Task<List<JavaEntity>> SearchFoldersAsync(string folderPath, int deep = 0, int maxDeep = MaxDeep) =>
+        Task.Run(() => SearchFolders(folderPath, deep, maxDeep));
 
-    private static async Task<List<JavaEntity>> DriveJavaEntities()
+    private static async Task<List<JavaEntity>> DriveJavaEntities(int maxDeep)
     {
         var javaList = new ConcurrentBag<JavaEntity>();
 
@@ -91,18 +89,54 @@ internal class Windows
         // multi-thread
         foreach (var item in readyRootFolders)
         {
-            var entities = await SearchFoldersAsync(item.ToString());
+            var entities = await SearchFoldersAsync(item.ToString(), maxDeep: maxDeep);
             foreach (var entity in entities) javaList.Add(entity);
         }
 
         return javaList.ToList();
     }
 
-    public static async Task<List<JavaEntity>> SearchJava()
+    public static List<JavaEntity> RegisterSearch()
+    {
+        // JavaSoft
+        using var javaSoftKey = Registry.LocalMachine!.OpenSubKey(@"SOFTWARE\JavaSoft");
+        if (javaSoftKey == null) return [];
+
+        var javaList = new List<JavaEntity>();
+
+        foreach (var subKeyName in javaSoftKey.GetSubKeyNames())
+        {
+            using var subKey = javaSoftKey.OpenSubKey(subKeyName, RegistryKeyPermissionCheck.ReadSubTree);
+
+            var javaHome = subKey?.GetValue("JavaHome");
+
+            var javaHoemPath = javaHome?.ToString();
+            if (javaHoemPath == null) continue;
+
+            var exePath = Path.Combine(javaHoemPath, "bin", "javaw.exe");
+            if (File.Exists(exePath)) javaList.Add(new JavaEntity(Path.Combine(javaHoemPath, "bin")));
+        }
+
+        return javaList;
+    }
+
+    public static async Task<List<JavaEntity>> SearchJava(bool fullSearch = false, int maxDeep = MaxDeep)
     {
         var javaEntities = new List<JavaEntity>();
-        javaEntities.AddRange(await EnvionmentJavaEntities());
-        javaEntities.AddRange(await DriveJavaEntities());
+        javaEntities.AddRange(RegisterSearch()); // search register
+        javaEntities.AddRange(await EnvionmentJavaEntities()); // search environment
+        if (fullSearch) javaEntities.AddRange(await DriveJavaEntities(maxDeep)); // full search
+        else
+        {
+            javaEntities.AddRange(await SearchFoldersAsync( // search minecraf launcher runtime folder
+                @"C:\Users\WhiteCAT\AppData\Local\Packages\Microsoft.4297127D64EC6_8wekyb3d8bbwe\LocalCache\Local\runtime",
+                maxDeep: 6));
+            if (Directory.Exists(@"C:\Program Files\Java\")) // search program java
+                javaEntities.AddRange(await SearchFoldersAsync(@"C:\Program Files\Java\", maxDeep: 4));
+            if (Directory.Exists(@"C:\Program Files (x86)\Java\")) // search program x86 java
+                javaEntities.AddRange(await SearchFoldersAsync(@"C:\Program files (x86)\Java\", maxDeep: 4));
+        }
+
         return javaEntities;
     }
 }
