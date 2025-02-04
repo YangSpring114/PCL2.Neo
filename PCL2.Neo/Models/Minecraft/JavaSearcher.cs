@@ -23,7 +23,7 @@ internal class Windows
         // JAVA_HOME
         var javaHomePath = Environment.GetEnvironmentVariable("JAVA_HOME");
         if (javaHomePath != null || Directory.Exists(javaHomePath)) // if not exist then return
-            if (File.Exists(javaHomePath))
+            if (Directory.Exists(javaHomePath))
             {
                 var filePath = javaHomePath.EndsWith(@"\bin\") ? javaHomePath : Path.Combine(javaHomePath, "bin");
                 javaList.Add(new JavaEntity(filePath));
