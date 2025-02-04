@@ -1,10 +1,10 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Win32;
 
 #pragma warning disable CA1416
 
@@ -24,7 +24,10 @@ internal class Windows
         var javaHomePath = Environment.GetEnvironmentVariable("JAVA_HOME");
         if (javaHomePath != null || Directory.Exists(javaHomePath)) // if not exist then return
             if (File.Exists(javaHomePath))
-                javaList.Add(new JavaEntity(javaHomePath));
+            {
+                var filePath = javaHomePath.EndsWith(@"\bin\") ? javaHomePath : Path.Combine(javaHomePath, "bin");
+                javaList.Add(new JavaEntity(filePath));
+            }
 
         // PATH multi-thread
         var pathList = new ConcurrentBag<JavaExist>();
@@ -99,7 +102,7 @@ internal class Windows
     public static List<JavaEntity> RegisterSearch()
     {
         // JavaSoft
-        using var javaSoftKey = Registry.LocalMachine!.OpenSubKey(@"SOFTWARE\JavaSoft");
+        using var javaSoftKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\JavaSoft");
         if (javaSoftKey == null) return [];
 
         var javaList = new List<JavaEntity>();
