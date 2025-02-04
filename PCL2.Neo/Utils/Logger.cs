@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -61,16 +60,27 @@ public class Logger
     private LogDelegate _msgboxLogDelegate = _ => { };
     private LogDelegate _debugLogDelegate = _ => { };
     private bool _isInitSuccess = true;
+    private bool _isRunning = true;
     private StringBuilder _logList = new();
+    private StreamWriter? _logWriter;
+    private Task _loggerTask;
 
     public static void InitLogger(string logFilePath)
     {
-        _instance = new Logger(logFilePath);
+        if(_instance == null) _instance = new Logger(logFilePath);
     }
 
     public static Logger GetInstance()
     {
-        return _instance!;
+        if(_instance != null) return _instance;
+        else throw new Exception("Logger not initialized.");
+    }
+
+    public static void Stop() {
+        if(_instance == null) throw new Exception("Logger not initialized.");
+        _instance._isRunning=false;
+        _instance._loggerTask.Wait();
+        _instance=null;
     }
 
     private Logger(string logFilePath)
@@ -92,18 +102,18 @@ public class Logger
 
         try
         {
-            var logWriter = new StreamWriter($"{logFilePath}Log1.txt");
-            Trace.Listeners.Add(new TextWriterTraceListener(logWriter));
+            _logWriter = new StreamWriter($"{logFilePath}Log1.txt") {
+                AutoFlush = true
+            };
         }
         catch (Exception ex)
         {
+            _logWriter = null;
             Log(ex, "日志写入失败", LogLevel.Hint);
         }
-
-        Trace.AutoFlush = true;
-        Task.Run(() =>
+        _loggerTask = Task.Run(() =>
         {
-            while (true)
+            while (_isRunning)
             {
                 if (_isInitSuccess) Flush();
                 else _logList.Clear();
@@ -156,6 +166,7 @@ public class Logger
 
     private void Flush()
     {
+        if(_logWriter == null) return;
         string log = "";
         lock (_logFlushLock)
         {
@@ -166,7 +177,6 @@ public class Logger
                 log = logListCache.ToString();
             }
         }
-
-        Trace.Write(log);
+        _logWriter.Write(log);
     }
 }
