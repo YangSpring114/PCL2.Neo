@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -13,36 +13,43 @@ public static class StringUtils
     /// <summary>
     /// 返回一个枚举对应的字符串。
     /// </summary>
-    public static string GetStringFromEnum(Enum enumData)
+    /// <exception cref="ArgumentNullException"></exception>
+    public static string GetEnumName(Enum enumData)
     {
-        return Enum.GetName(enumData.GetType(), enumData);
+        var result = Enum.GetName(enumData.GetType(), enumData);
+        return string.IsNullOrEmpty(result) ? throw new ArgumentNullException() : result;
     }
 
     /// <summary>
-    /// 将文件大小转化为适合的文本形式，如“1.28 M”。
+    /// 将文件大小转化为适合的文本形式，如“1.28 MB”。
     /// </summary>
     public static string GetFileSizeString(long fileSize)
     {
         var isNegative = fileSize < 0;
         if (isNegative) fileSize *= -1;
-        if (fileSize < 1000)
+        switch (fileSize)
         {
-            return (isNegative ? "-" : "") + fileSize + " B";
-        }
-        if (fileSize < 1024 * 1000)
-        {
-            string roundResult = Math.Round((double)fileSize / 1024).ToString();
-            return (isNegative ? "-" : "") + Math.Round((double)fileSize / 1024,(int)MathUtils.MathClamp(3-roundResult.Length,0,2)) + " K";
-        }
-        if (fileSize < 1024 * 1024 * 1000)
-        {
-            string roundResult = Math.Round((double)fileSize / 1024 / 1024).ToString();
-            return (isNegative ? "-" : "") + Math.Round((double)fileSize  / 1024 / 1024,(int)MathUtils.MathClamp(3-roundResult.Length,0,2)) + " M";
-        }
-        else
-        {
-            string roundResult = Math.Round((double)fileSize / 1024 / 1024 / 1024).ToString();
-            return (isNegative ? "-" : "") + Math.Round((double)fileSize / 1024 / 1024 / 1024,(int)MathUtils.MathClamp(3-roundResult.Length,0,2)) + " G";
+            case < 1000:
+                return (isNegative ? "-" : "") + fileSize + " B";
+            case < 1024 * 1000:
+            {
+                var roundResult = Math.Round((double)fileSize / 1024).ToString(CultureInfo.CurrentCulture);
+                return (isNegative ? "-" : "") + Math.Round((double)fileSize / 1024,
+                    (int)MathUtils.MathClamp(3 - roundResult.Length, 0, 2)) + " KB";
+            }
+            case < 1024 * 1024 * 1000:
+            {
+                var roundResult = Math.Round((double)fileSize / 1024 / 1024).ToString(CultureInfo.CurrentCulture);
+                return (isNegative ? "-" : "") + Math.Round((double)fileSize / 1024 / 1024,
+                    (int)MathUtils.MathClamp(3 - roundResult.Length, 0, 2)) + " MB";
+            }
+            default:
+            {
+                var roundResult = Math.Round((double)fileSize / 1024 / 1024 / 1024)
+                    .ToString(CultureInfo.CurrentCulture);
+                return (isNegative ? "-" : "") + Math.Round((double)fileSize / 1024 / 1024 / 1024,
+                    (int)MathUtils.MathClamp(3 - roundResult.Length, 0, 2)) + " GB";
+            }
         }
     }
 
@@ -52,17 +59,14 @@ public static class StringUtils
     public static string Capitalize(this string word)
     {
         if (string.IsNullOrEmpty(word)) return word;
-        return word.Substring(0, 1).ToUpperInvariant() + word.Substring(1).ToLowerInvariant();
+        return word[..1].ToUpperInvariant() + word[1..].ToLowerInvariant();
     }
 
     /// <summary>
     /// 将字符串统一至某个长度，过短则以 Code 将其右侧填充，过长则截取靠左的指定长度。
     /// </summary>
-    public static string StrFill(string str, string code, byte length)
-    {
-        if(str.Length > length) return str.Substring(0, length);
-        return str.PadRight(length, Convert.ToChar(code));
-    }
+    public static string StrFill(string str, string code, byte length) =>
+        str.Length > length ? str[..length] : str.PadRight(length, Convert.ToChar(code));
 
     /// <summary>
     /// 将一个小数显示为固定的小数点后位数形式，将向零取整。
@@ -70,11 +74,10 @@ public static class StringUtils
     /// </summary>
     public static string StrFillNum(double num, int length)
     {
-        string result = "";
-        num = Math.Round(num, length,MidpointRounding.AwayFromZero);
-        result = num.ToString();
-        if (!result.Contains(".")) return (result+".").PadRight(result.Length+1+length, '0');
-        return result.PadRight(result.Split(".")[0].Length + 1 + length, '0');
+        var result = Math.Round(num, length, MidpointRounding.AwayFromZero).ToString(CultureInfo.CurrentCulture);
+        return !result.Contains(".")
+            ? (result + ".").PadRight(result.Length + 1 + length, '0')
+            : result.PadRight(result.Split(".")[0].Length + 1 + length, '0');
     }
 
     /// <summary>
@@ -89,63 +92,32 @@ public static class StringUtils
     /// <summary>
     /// 连接字符串。
     /// </summary>
-    public static string Join(this IEnumerable list, string split)
-    {
-        StringBuilder builder = new StringBuilder();
-        bool isFirst = true;
-        foreach (var element in list)
-        {
-            if(isFirst) isFirst = false;
-            else builder.Append(split);
-            if(element!=null) builder.Append(element);
-        }
-        return builder.ToString();
-    }
+    public static string Join<T>(this IEnumerable<T> list, string split) => string.Join(split, list);
 
     /// <summary>
     /// 分割字符串。
     /// </summary>
-    public static string[] Split(this string fullStr, string splitStr)
-    {
-        return splitStr.Length == 1 ? fullStr.Split(splitStr[0]) : fullStr.Split([splitStr], StringSplitOptions.None);
-    }
+    public static string[] Split(this string fullStr, string splitStr) => fullStr.Split(splitStr);
 
     /// <summary>
     /// 获取字符串哈希值。
     /// </summary>
-    public static ulong GetHash(string str)
-    {
-        ulong result = 5381;
-        for (int i = 0; i <= str.Length - 1; i++)
-        {
-            result = (result << 5) ^ result ^ str[i];
-        }
-        return result ^ 12218072394304324399UL;
-    }
+    public static ulong GetHash(string str) => (ulong)str.GetHashCode();
 
     /// <summary>
     /// 获取字符串 MD5。
     /// </summary>
-    public static string GetStringMD5(string str)
+    public static string GetStringMd5(string str)
     {
-        MD5 md5Hasher = MD5.Create();
-        byte[] hashedDataBytes;
-        hashedDataBytes = md5Hasher.ComputeHash(Encoding.GetEncoding("gb2312").GetBytes(str));
-        StringBuilder sb = new StringBuilder();
-        foreach (byte i in hashedDataBytes)
-        {
-            sb.Append(i.ToString("x2"));
-        }
-        return sb.ToString();
+        var hashData = MD5.HashData(Encoding.UTF8.GetBytes(str));
+        return hashData.Aggregate(new StringBuilder(),
+            (s, b) => s.Append(b.ToString("x2"))).ToString();
     }
 
     /// <summary>
     /// 检查字符串中的字符是否均为 ASCII 字符。
     /// </summary>
-    public static bool IsASCII(this string input)
-    {
-        return input.All((c) => c < 128);
-    }
+    public static bool IsAscii(this string input) => input.All((c) => c < 128);
 
     /// <summary>
     /// 获取在子字符串第一次出现之前的部分，例如对 2024/11/08 拆切 / 会得到 2024。
@@ -153,8 +125,10 @@ public static class StringUtils
     /// </summary>
     public static string BeforeFirst(this string str, string text, bool ignoreCase = false)
     {
-        int pos = (String.IsNullOrEmpty(text) ? -1 : str.IndexOfF(text, ignoreCase));
-        return (pos >= 0 ? str.Substring(0, pos) : str);
+        var pos = string.IsNullOrEmpty(text)
+            ? -1
+            : str.LastIndexOf(text, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+        return pos >= 0 ? str[..pos] : str;
     }
 
     /// <summary>
@@ -163,8 +137,10 @@ public static class StringUtils
     /// </summary>
     public static string BeforeLast(this string str, string text, bool ignoreCase = false)
     {
-        int pos = (String.IsNullOrEmpty(text) ? -1 : str.LastIndexOfF(text, ignoreCase));
-        return (pos >= 0 ? str.Substring(0, pos) : str);
+        var pos = string.IsNullOrEmpty(text)
+            ? -1
+            : str.LastIndexOf(text, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+        return pos >= 0 ? str[..pos] : str;
     }
 
     /// <summary>
@@ -173,8 +149,10 @@ public static class StringUtils
     /// </summary>
     public static string AfterFirst(this string str, string text, bool ignoreCase = false)
     {
-        int pos = (String.IsNullOrEmpty(text) ? -1 : str.IndexOfF(text, ignoreCase));
-        return (pos >= 0 ? str.Substring(pos+text.Length) : str);
+        var pos = string.IsNullOrEmpty(text)
+            ? -1
+            : str.LastIndexOf(text, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+        return pos >= 0 ? str[(pos + text.Length)..] : str;
     }
     
     /// <summary>
@@ -183,8 +161,10 @@ public static class StringUtils
     /// </summary>
     public static string AfterLast(this string str, string text, bool ignoreCase = false)
     {
-        int pos = (String.IsNullOrEmpty(text) ? -1 : str.LastIndexOfF(text, ignoreCase));
-        return (pos >= 0 ? str.Substring(pos+text.Length) : str);
+        var pos = string.IsNullOrEmpty(text)
+            ? -1
+            : str.LastIndexOf(text, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+        return pos >= 0 ? str[(pos + text.Length)..] : str;
     }
 
     /// <summary>
@@ -198,80 +178,28 @@ public static class StringUtils
     /// <returns></returns>
     public static string Between(this string str, string after, string before, bool ignoreCase = false)
     {
-        int startPos = String.IsNullOrEmpty(after) ? -1 : str.LastIndexOfF(after, ignoreCase);
+        var startPos = string.IsNullOrEmpty(after)
+            ? -1
+            : str.LastIndexOf(after, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
         if (startPos >= 0) startPos += after.Length;
         else startPos = 0;
-        int endPos = String.IsNullOrEmpty(before) ? -1 : str.IndexOfF(before, startPos,ignoreCase);
-        if(endPos >= 0) return str.Substring(startPos, endPos - startPos);
-        else if (startPos > 0) return str.Substring(startPos);
+        var endPos = string.IsNullOrEmpty(before)
+            ? -1
+            : str.IndexOf(before, startPos, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+        if (endPos >= 0) return str.Substring(startPos, endPos - startPos);
+        else if (startPos > 0) return str[startPos..];
         else return str;
-    }
-
-    /// <summary>
-    /// 高速的 StartsWith。
-    /// </summary>
-    public static bool StartsWithF(this string str, string prefix, bool ignoreCase = false)
-    {
-        return str.StartsWith(prefix, (ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
-    }
-
-    /// <summary>
-    /// 高速的 EndsWith。
-    /// </summary>
-    public static bool EndsWithF(this string str, string suffix, bool ignoreCase = false)
-    {
-        return str.EndsWith(suffix, (ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
-    }
-    
-    /// <summary>
-    /// 支持可变大小写判断的 Contains。
-    /// </summary>
-    public static bool ContainsF(this string str,string subStr,bool ignoreCase = false)
-    {
-        return str.IndexOf(subStr, (ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal)) >= 0;
-    }
-    
-    /// <summary>
-    /// 高速的 IndexOf。
-    /// </summary>
-    public static int IndexOfF(this string str, string subStr,bool ignoreCase = false)
-    {
-        return str.IndexOf(subStr, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
-    }
-
-    /// <summary>
-    /// 高速的 IndexOf。
-    /// </summary>
-    public static int IndexOfF(this string str, string subStr, int startIndex, bool ignoreCase = false)
-    {
-        return str.IndexOf(subStr, startIndex, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
-    }
-
-    /// <summary>
-    /// 高速的 LastIndexOf。
-    /// </summary>
-    public static int LastIndexOfF(this string str, string subStr, bool ignoreCase = false)
-    {
-        return str.LastIndexOf(subStr, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
-    }
-
-    /// <summary>
-    /// 高速的 LastIndexOf。
-    /// </summary>
-    public static int LastIndexOfF(this string str, string subStr, int startIndex, bool ignoreCase = false)
-    {
-        return str.LastIndexOf(subStr, startIndex, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
     }
 
     /// <summary>
     /// 不会报错的 Val。
     /// 如果输入有误，返回 0。
     /// </summary>
-    public static double Val(object str)
+    public static double ToDouble(this string str)
     {
         try
         {
-            return (str is string && str == "&" ? 0 : Double.Parse((string)str));
+            return double.Parse(str);
         }
         catch (Exception)
         {
@@ -282,12 +210,11 @@ public static class StringUtils
     /// <summary>
     /// 为字符串进行 XML 转义。
     /// </summary>
-    public static string EscapeXML(string str)
+    public static string EscapeXml(string str)
     {
-        if (str.StartsWithF("{")) str = "{}" + str;
-        return str.
-            Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("'", "&apos;").
-            Replace("\"", "&quot;").Replace("\r\n", "&#xa;");
+        if (str.StartsWith("{")) str = "{}" + str;
+        return str.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("'", "&apos;")
+            .Replace("\"", "&quot;").Replace("\r\n", "&#xa;");
     }
 
     /// <summary>
@@ -297,16 +224,9 @@ public static class StringUtils
     {
         try
         {
-            List<string> result = [];
-            var regexSearchRes = new Regex(regex, options).Matches(str);
-            if (regexSearchRes==null) return result;
-            foreach (Match item in regexSearchRes)
-            {
-                result.Add(item.Value);
-            }
-            return result;
+            return Regex.Matches(str, regex, options).Select(m => m.Value).ToList();
         }
-        catch (Exception e)
+        catch (Exception)
         {
             // TODO Log(ex, "正则匹配全部项出错");
             return [];
@@ -320,10 +240,10 @@ public static class StringUtils
     {
         try
         {
-            var result = Regex.Match(str, regex, options).Value;
-            return (result == "" ? null : result);
+            var maech = Regex.Match(str, regex, options);
+            return maech.Success ? maech.Value : null;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //TODO Log(ex, "正则匹配第一项出错");
             return null;
@@ -339,26 +259,10 @@ public static class StringUtils
         {
             return Regex.IsMatch(str, regex, options);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //TODO Log(ex, "正则检查出错");
             return false;
         }
-    }
-    
-    /// <summary>
-    /// 进行正则替换，会抛出错误。
-    /// </summary>
-    public static string RegexReplace(string input, string replacement, string regex, RegexOptions options = RegexOptions.None)
-    {
-        return Regex.Replace(input, regex, replacement, options);
-    }
-    
-    /// <summary>
-    /// 对每个正则匹配分别进行替换，会抛出错误。
-    /// </summary>
-    public static string RegexReplaceEach(string input, MatchEvaluator replacement, string regex, RegexOptions options = RegexOptions.None)
-    {
-        return Regex.Replace(input, regex, replacement, options);
     }
 }
