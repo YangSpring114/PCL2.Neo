@@ -1,4 +1,4 @@
-﻿namespace PCL2.Neo.Helpers;
+namespace PCL2.Neo.Helpers;
 
 public class AnimationHelper
 {

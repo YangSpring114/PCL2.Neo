@@ -1,10 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using PCL2.Neo.Models.Minecraft.JavaSearcher;
 
 namespace PCL2.Neo.Models.Minecraft
 {
+    /// <summary>
+    /// 测试
+    /// </summary>
     public class Java
     {
         public static async Task<List<JavaEntity>> SearchJava()

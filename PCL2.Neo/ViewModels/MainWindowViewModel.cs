@@ -1,4 +1,4 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
 
 namespace PCL2.Neo.ViewModels
 {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace PCL2.Neo.Utils;
 
