@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-using System;
-=======
 ﻿using System;
->>>>>>> 0af6c65e03163f6908c3345393a3181e8cb1025c
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
