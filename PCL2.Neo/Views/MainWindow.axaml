@@ -1,11 +1,11 @@
 <Window
     Background="Transparent"
-    Height="500"
+    Height="485"
     MinHeight="470"
     MinWidth="810"
     SystemDecorations="None"
     Title="PCL2 Neo"
-    Width="850"
+    Width="855"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
