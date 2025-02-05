@@ -10,54 +10,35 @@ using Microsoft.Win32;
 
 namespace PCL2.Neo.Models.Minecraft.JavaSearcher;
 
-/// <summary>
-/// 处理windows系统下的java
-/// </summary>
 internal class Windows
 {
-    /// <summary>
-    /// 异步搜索指定路径下是否存在javaw.exe，并返回Java存在信息。
-    /// </summary>
-    /// <param name="path">要检查的路径。</param>
-    /// <returns>返回包含路径和是否存在Java环境的信息。</returns>
     private static Task<JavaExist> PathEnvSearchAsync(string path) => Task.Run(() => new JavaExist
         { IsExist = File.Exists(Path.Combine(path, "javaw.exe")), Path = path });
 
-    /// <summary>
-    /// 从环境变量中异步查找所有可用的Java环境实体。
-    /// </summary>
-    /// <returns>返回一个包含所有找到的Java环境实体的列表。</returns>
     private static async Task<List<JavaEntity>> EnvionmentJavaEntities()
     {
         var javaList = new List<JavaEntity>();
 
-        // 根据JAVA_HOME环境变量查找Java安装目录
         // find by environment path
         // JAVA_HOME
         var javaHomePath = Environment.GetEnvironmentVariable("JAVA_HOME");
         if (javaHomePath != null || Directory.Exists(javaHomePath)) // if not exist then return
             if (Directory.Exists(javaHomePath))
             {
-                // 确保路径指向bin目录或在其后追加"bin"
                 var filePath = javaHomePath.EndsWith(@"\bin\") ? javaHomePath : Path.Combine(javaHomePath, "bin");
                 javaList.Add(new JavaEntity(filePath));
             }
 
-        // 根据Path环境变量多线程查找可能的Java安装位置
         // PATH multi-thread
         var pathList = new ConcurrentBag<JavaExist>();
         foreach (var item in Environment.GetEnvironmentVariable("Path")!.Split(';'))
             pathList.Add(await PathEnvSearchAsync(item));
 
-        // 过滤出存在javaw.exe的路径并转换为JavaEntity实体
         javaList.AddRange(pathList.Where(j => j.IsExist).Select(j => new JavaEntity(j.Path)));
 
         return javaList;
     }
 
-    /// <summary>
-    /// 关键子文件夹名称数组，用于筛选可能包含Java环境的文件夹。
-    /// </summary>
     private static readonly string[] KeySubFolderWrods =
     [
         "java", "jdk", "env", "环境", "run", "软件", "jre", "mc", "dragon",
@@ -69,75 +50,44 @@ internal class Windows
         "4297127d64ec6", "国服", "网易", "ext", "netease", "1.", "启动"
     ];
 
-    /// <summary>
-    /// 最大递归深度。
-    /// </summary>
     public const int MaxDeep = 7;
 
-    /// <summary>
-    /// 在指定目录及其子目录中递归搜索包含javaw.exe的文件夹。
-    /// </summary>
-    /// <param name="folderPath">要搜索的文件夹路径。</param>
-    /// <param name="deep">当前递归深度。</param>
-    /// <param name="maxDeep">最大递归深度，默认值为MaxDeep。</param>
-    /// <returns>返回一个包含所有找到的Java环境实体的列表。</returns>
     private static List<JavaEntity> SearchFolders(string folderPath, int deep, int maxDeep = MaxDeep)
     {
         var entities = new List<JavaEntity>();
-
-        // 如果递归深度超过最大值，则返回
         // if too deep then return
         if (deep >= maxDeep) return entities;
 
         try
         {
-            // 检查当前文件夹是否包含javaw.exe
             if (File.Exists(Path.Combine(folderPath, "javaw.exe"))) entities.Add(new JavaEntity(folderPath));
 
-            // 获取所有子文件夹
             var subFolder = Directory.GetDirectories(folderPath);
 
-            // 筛选出包含关键字的子文件夹
             var selectFolder = subFolder.Where(f => KeySubFolderWrods.Any(w => f.ToLower().Contains(w.ToLower())));
             //entities.AddRange(selectFolder.Select(SearchFolders).SelectMany(i => i).ToList());
-            // 对每个选中的子文件夹进行递归搜索
             foreach (var folder in selectFolder)
                 entities.AddRange(SearchFolders(folder, deep + 1)); // search sub folders
         }
         catch (UnauthorizedAccessException)
         {
-            // 忽略无法访问的文件夹
             // ignore can not access folder
         }
 
         return entities;
     }
 
-    /// <summary>
-    /// 异步执行SearchFolders方法。
-    /// </summary>
-    /// <param name="folderPath">要搜索的文件夹路径。</param>
-    /// <param name="deep">当前递归深度，默认为0。</param>
-    /// <param name="maxDeep">最大递归深度，默认值为MaxDeep。</param>
-    /// <returns>返回一个包含所有找到的Java环境实体的列表。</returns>
     private static Task<List<JavaEntity>> SearchFoldersAsync(string folderPath, int deep = 0, int maxDeep = MaxDeep) =>
         Task.Run(() => SearchFolders(folderPath, deep, maxDeep));
 
-    /// <summary>
-    /// 从驱动器根目录开始异步搜索Java环境实体。
-    /// </summary>
-    /// <param name="maxDeep">最大递归深度。</param>
-    /// <returns>返回一个包含所有找到的Java环境实体的列表。</returns>
     private static async Task<List<JavaEntity>> DriveJavaEntities(int maxDeep)
     {
         var javaList = new ConcurrentBag<JavaEntity>();
 
-        // 获取所有准备好的固定驱动器
         var readyDrive = DriveInfo.GetDrives().Where(d => d is { IsReady: true, DriveType: DriveType.Fixed });
         var readyRootFolders = readyDrive.Select(d => d.RootDirectory)
             .Where(f => !f.Attributes.HasFlag(FileAttributes.ReparsePoint));
 
-        // 多线程搜索Java环境
         // search java start at root folders
         // multi-thread
         foreach (var item in readyRootFolders)
@@ -149,10 +99,6 @@ internal class Windows
         return javaList.ToList();
     }
 
-    /// <summary>
-    /// 在注册表中搜索Java环境实体。
-    /// </summary>
-    /// <returns>返回一个包含所有找到的Java环境实体的列表。</returns>
     public static List<JavaEntity> RegisterSearch()
     {
         // JavaSoft
@@ -177,20 +123,15 @@ internal class Windows
         return javaList;
     }
 
-    /// <summary>
-    /// 搜索系统中的Java环境实体。
-    /// </summary>
-    /// <param name="fullSearch">是否进行全面搜索，默认为false。</param>
-    /// <param name="maxDeep">最大递归深度，默认值为MaxDeep。</param>
-    /// <returns>返回一个包含所有找到的Java环境实体的列表。</returns>
     public static async Task<List<JavaEntity>> SearchJava(bool fullSearch = false, int maxDeep = MaxDeep)
     {
         var javaEntities = new List<JavaEntity>();
-        javaEntities.AddRange(RegisterSearch()); // search register // 注册表搜索
-        javaEntities.AddRange(await EnvionmentJavaEntities()); // search environment // 环境变量搜索
-        if (fullSearch) javaEntities.AddRange(await DriveJavaEntities(maxDeep)); // full search // 全面搜索
+        javaEntities.AddRange(RegisterSearch()); // search register
+        javaEntities.AddRange(await EnvionmentJavaEntities()); // search environment
+        if (fullSearch) javaEntities.AddRange(await DriveJavaEntities(maxDeep)); // full search
         else
         {
+
             var programFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Java");
             var programFileX86 =
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Java");
@@ -209,9 +150,6 @@ internal class Windows
 }
 
 
-/// <summary>
-/// 处理Unix系统下的java
-/// </summary>
 internal class Unix
 {
     public static List<JavaEntity> SerachJava()
