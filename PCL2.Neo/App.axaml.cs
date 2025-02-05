@@ -1,9 +1,12 @@
+using System;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using PCL2.Neo.Helpers;
+using PCL2.Neo.Utils;
 using PCL2.Neo.ViewModels;
 using PCL2.Neo.Views;
 
@@ -14,6 +17,7 @@ namespace PCL2.Neo
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
+            DevelopHelper.RunTest();
         }
 
         public override void OnFrameworkInitializationCompleted()
