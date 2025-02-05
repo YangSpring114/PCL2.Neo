@@ -19,7 +19,8 @@ public partial class MainWindow : Window
 
         BtnTitleMin.Click += (_, _) => WindowState = WindowState.Minimized;
     }
-    private void OnNavPointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e) {
+    private void OnNavPointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+    {
         this.BeginMoveDrag(e);
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
@@ -11,6 +12,7 @@ using PCL2.Neo.Utils;
 
 namespace PCL2.Neo.Controls;
 
+[PseudoClasses(":color", ":white", ":black", ":red", ":custom")]
 public class MyIconButton : TemplatedControl
 {
     private Path? _pathIcon;
@@ -23,8 +25,8 @@ public class MyIconButton : TemplatedControl
         _panBack = e.NameScope.Find<Border>("PanBack")!;
         
         // 事件
-        this.PointerEntered += (_, _) => RefreshColor();
-        this.PointerExited += (_, _) => RefreshColor();
+        //this.PointerEntered += (_, _) => RefreshColor();
+        //this.PointerExited += (_, _) => RefreshColor();
         //this.PointerReleased += OnPointerReleased;
         //this.AddHandler(PointerReleasedEvent, OnPointerReleased, RoutingStrategies.Bubble, true);
         this.Loaded += (_, _) => RefreshColor();
@@ -32,6 +34,8 @@ public class MyIconButton : TemplatedControl
         // 初始化
         _pathIcon.Data = Geometry.Parse(Logo);
         _pathIcon.RenderTransform = new ScaleTransform{ ScaleX = LogoScale, ScaleY = LogoScale };
+        
+        SetPseudoClass();
     }
     
     protected override void OnPointerReleased(PointerReleasedEventArgs pointerReleasedEventArgs)
@@ -43,7 +47,6 @@ public class MyIconButton : TemplatedControl
             // 这里缺少 PCL 的 Event
         }
     }
-
 
     public int Uuid = CoreUtils.GetUuid();
     
@@ -94,23 +97,37 @@ public class MyIconButton : TemplatedControl
         set
         {
             SetValue(IconThemeProperty, value);
-            RefreshColor();
+            SetPseudoClass();
         }
     }
 
-    public new static readonly StyledProperty<SolidColorBrush> ForegroundProperty = AvaloniaProperty.Register<MyIconButton, SolidColorBrush>(
+    public new static readonly StyledProperty<IBrush> ForegroundProperty = AvaloniaProperty.Register<MyIconButton, IBrush>(
         nameof(Foreground));
 
-    public new SolidColorBrush Foreground
+    public new IBrush Foreground
     {
         get => GetValue(ForegroundProperty);
-        set
-        {
-            SetValue(ForegroundProperty, value);
-            RefreshColor();
-        }
+        set => SetValue(ForegroundProperty, value);
+    }
+    
+    public static readonly StyledProperty<IBrush> ForegroundInnerProperty = AvaloniaProperty.Register<MyIconButton, IBrush>(
+        nameof(ForegroundInner));
+
+    public IBrush ForegroundInner
+    {
+        get => GetValue(ForegroundInnerProperty);
+        set => SetValue(ForegroundInnerProperty, value);
     }
 
+    public new static readonly StyledProperty<IBrush> BackgroundProperty = AvaloniaProperty.Register<MyIconButton, IBrush>(
+        nameof(Background));
+
+    public new IBrush Background
+    {
+        get => GetValue(BackgroundProperty);
+        set => SetValue(BackgroundProperty, value);
+    }
+    
     public static readonly StyledProperty<string> EventTypeProperty = AvaloniaProperty.Register<MyIconButton, string>(
         nameof(EventType));
 
@@ -144,100 +161,51 @@ public class MyIconButton : TemplatedControl
         RaiseEvent(new RoutedEventArgs(ClickEvent));
     }
     
+    /// <summary>
+    /// 初始化颜色。
+    /// </summary>
     private void RefreshColor()
     {
         if (_pathIcon is null || _panBack is null) return;
-        if (IsLoaded)
+        switch (IconTheme)
         {
-            if (_panBack.Background is null)
-            {
-                _panBack.Background = (SolidColorBrush)new MyColor(0,255,255,255);
-            }
-            if (_pathIcon.Fill is null)
-            {
-                switch (IconTheme)
-                {
-                    case IconThemes.Red: 
-                        _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 255, 76, 76);
-                        break;
-                    case IconThemes.Black:
-                        _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 0, 0, 0);
-                        break;
-                    case IconThemes.Custom:
-                        _pathIcon.Fill = (SolidColorBrush)new MyColor(160, Foreground);
-                        break;
-                }
-            }
-
-            if (IsPointerOver)
-            {
-                switch (IconTheme)
-                {
-                    case IconThemes.Color:
-                        _pathIcon.Fill = (IBrush?)Application.Current!.Resources["ColorBrush2"];
-                        break;
-                    case IconThemes.White:
-                        _panBack.Background = (SolidColorBrush)new MyColor(50, 255, 255, 255);
-                        break;
-                    case IconThemes.Red:
-                        _pathIcon.Fill = (SolidColorBrush)new MyColor(76, 76, 76);
-                        break;
-                    case IconThemes.Black:
-                        _pathIcon.Fill = (SolidColorBrush)new MyColor(230, 0, 0, 0);
-                        break;
-                    case IconThemes.Custom:
-                        _pathIcon.Fill = (SolidColorBrush)new MyColor(255, Foreground);
-                        break;
-                }
-            }
-            else
-            {
-                switch (IconTheme)
-                {
-                    case IconThemes.Color:
-                        _pathIcon.Fill = (IBrush?)Application.Current!.Resources["ColorBrush4"];
-                        _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
-                        break;
-                    case IconThemes.White:
-                        _pathIcon.Fill = (IBrush?)Application.Current!.Resources["ColorBrush8"];
-                        _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
-                        break;
-                    case IconThemes.Red:
-                        _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 255, 76, 76);
-                        _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
-                        break;
-                    case IconThemes.Black:
-                        _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 0, 0, 0);
-                        _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
-                        break;
-                    case IconThemes.Custom:
-                        _pathIcon.Fill = (SolidColorBrush)new MyColor(160, Foreground);
-                        _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
-                        break;
-                }
-            }
+            case IconThemes.Color:
+                _pathIcon.Fill = Application.Current!.Resources["ColorBrush5"] as SolidColorBrush;
+                break;
+            case IconThemes.White:
+                _pathIcon.Fill = (SolidColorBrush)new MyColor(234, 242, 254);
+                break;
+            case IconThemes.Red:
+                _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 255, 76, 76);
+                break;
+            case IconThemes.Black:
+                _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 0, 0, 0);
+                break;
+            case IconThemes.Custom:
+                _pathIcon.Fill = (SolidColorBrush)new MyColor(160, (SolidColorBrush)Foreground);
+                break;
         }
-        else
+        _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
+    }
+    private void SetPseudoClass()
+    {
+        switch (IconTheme)
         {
-            switch (IconTheme)
-            {
-                case IconThemes.Color:
-                    _pathIcon.Fill = Application.Current!.Resources["ColorBrush5"] as SolidColorBrush;
-                    break;
-                case IconThemes.White:
-                    _pathIcon.Fill = Application.Current!.Resources["ColorBrush8"] as SolidColorBrush;
-                    break;
-                case IconThemes.Red:
-                    _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 255, 76, 76);
-                    break;
-                case IconThemes.Black:
-                    _pathIcon.Fill = (SolidColorBrush)new MyColor(160, 0, 0, 0);
-                    break;
-                case IconThemes.Custom:
-                    _pathIcon.Fill = (SolidColorBrush)new MyColor(160, Foreground);
-                    break;
-            }
-            _panBack.Background = (SolidColorBrush)new MyColor(0, 255, 255, 255);
+            case IconThemes.Color:
+                PseudoClasses.Set(":color", true);
+                break;
+            case IconThemes.White:
+                PseudoClasses.Set(":white", true);
+                break;
+            case IconThemes.Black:
+                PseudoClasses.Set(":black", true);
+                break;
+            case IconThemes.Red:
+                PseudoClasses.Set(":red", true);
+                break;
+            case IconThemes.Custom:
+                PseudoClasses.Set(":custom", true);
+                break;
         }
     }
 }

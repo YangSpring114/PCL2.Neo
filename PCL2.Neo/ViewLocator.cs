@@ -5,7 +5,6 @@ using PCL2.Neo.ViewModels;
 
 namespace PCL2.Neo
 {
-
     public class ViewLocator : IDataTemplate
     {
         public Control? Build(object? param)
