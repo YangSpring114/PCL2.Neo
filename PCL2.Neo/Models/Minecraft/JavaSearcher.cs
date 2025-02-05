@@ -131,20 +131,6 @@ internal class Windows
         if (fullSearch) javaEntities.AddRange(await DriveJavaEntities(maxDeep)); // full search
         else
         {
-<<<<<<< HEAD
-<<<<<<< HEAD
-            javaEntities.AddRange(await SearchFoldersAsync( // search minecraf launcher runtime folder // 特定路径搜索
-                @"C:\Users\WhiteCAT\AppData\Local\Packages\Microsoft.4297127D64EC6_8wekyb3d8bbwe\LocalCache\Local\runtime",
-                maxDeep: 6));
-            if (Directory.Exists(@"C:\Program Files\Java\")) // search program java // Program Files Java搜索
-                javaEntities.AddRange(await SearchFoldersAsync(@"C:\Program Files\Java\", maxDeep: 4));
-            if (Directory.Exists(
-                    @"C:\Program Files (x86)\Java\")) // search program x86 java // Program Files (x86) Java搜索
-                javaEntities.AddRange(await SearchFoldersAsync(@"C:\Program files (x86)\Java\", maxDeep: 4));
-=======
-=======
-
->>>>>>> 0af6c65e03163f6908c3345393a3181e8cb1025c
             var programFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Java");
             var programFileX86 =
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Java");
@@ -156,23 +142,15 @@ internal class Windows
                 javaEntities.AddRange(await SearchFoldersAsync(programFile, maxDeep: 4));
             if (Directory.Exists(programFileX86)) // search program x86 java
                 javaEntities.AddRange(await SearchFoldersAsync(programFileX86, maxDeep: 4));
-<<<<<<< HEAD
->>>>>>> bugfix/javaSearch
-=======
->>>>>>> 0af6c65e03163f6908c3345393a3181e8cb1025c
         }
 
         return javaEntities;
     }
 }
 
-<<<<<<< HEAD
 /// <summary>
 /// 处理Unix系统下的java
 /// </summary>
-=======
-
->>>>>>> 0af6c65e03163f6908c3345393a3181e8cb1025c
 internal class Unix
 {
     public static List<JavaEntity> SerachJava()
