@@ -90,21 +90,6 @@ public static class StringUtils
     }
 
     /// <summary>
-    /// 连接字符串。
-    /// </summary>
-    public static string Join<T>(this IEnumerable<T> list, string split) => string.Join(split, list);
-
-    /// <summary>
-    /// 分割字符串。
-    /// </summary>
-    public static string[] Split(this string fullStr, string splitStr) => fullStr.Split(splitStr);
-
-    /// <summary>
-    /// 获取字符串哈希值。
-    /// </summary>
-    public static ulong GetHash(string str) => (ulong)str.GetHashCode();
-
-    /// <summary>
     /// 获取字符串 MD5。
     /// </summary>
     public static string GetStringMd5(string str)
