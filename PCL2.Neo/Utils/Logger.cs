@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -9,8 +11,6 @@ namespace PCL2.Neo.Utils;
 
 public class Logger
 {
-    private const int FlushInterval = 50;
-
     public enum LogLevel
     {
         /// <summary>
@@ -59,11 +59,7 @@ public class Logger
     private LogDelegate _assertLogDelegate = _ => { };
     private LogDelegate _msgboxLogDelegate = _ => { };
     private LogDelegate _debugLogDelegate = _ => { };
-    private bool _isInitSuccess = true;
-    private bool _isRunning = true;
-    private StringBuilder _logList = new();
     private StreamWriter? _logWriter;
-    private Task _loggerTask;
 
     public static void InitLogger(string logFilePath)
     {
@@ -78,13 +74,13 @@ public class Logger
 
     public static void Stop() {
         if(_instance == null) throw new Exception("Logger not initialized.");
-        _instance._isRunning=false;
-        _instance._loggerTask.Wait();
+        if(_instance._logWriter!=null) _instance._logWriter.Dispose();
         _instance=null;
     }
 
     private Logger(string logFilePath)
     {
+        bool _isInitSuccess = true;
         try
         {
             File.Create($"{logFilePath}Log1.txt").Dispose();
@@ -99,27 +95,16 @@ public class Logger
             _isInitSuccess = false;
             Log(ex, "日志初始化失败", LogLevel.Developer);
         }
-
+        if(!_isInitSuccess) return;
         try
         {
-            _logWriter = new StreamWriter($"{logFilePath}Log1.txt") {
-                AutoFlush = true
-            };
+            _logWriter = new StreamWriter($"{logFilePath}Log1.txt");
         }
         catch (Exception ex)
         {
             _logWriter = null;
             Log(ex, "日志写入失败", LogLevel.Hint);
         }
-        _loggerTask = Task.Run(() =>
-        {
-            while (_isRunning)
-            {
-                if (_isInitSuccess) Flush();
-                else _logList.Clear();
-                Thread.Sleep(FlushInterval);
-            }
-        });
     }
 
     public void SetDelegate(LogLevel level, LogDelegate logDelegate)
@@ -138,7 +123,10 @@ public class Logger
     public void Log(string text, LogLevel level = LogLevel.Normal, string title = "出现错误")
     {
         string logText = $"[{TimeDateUtils.GetTimeNow()}] {text}{CrLf}";
-        _logList.Append(logText);
+        if(_logWriter != null) _logWriter.WriteAsync(logText);
+#if DEBUG 
+        Debug.Write(logText);        
+#endif
         string msg = StringUtils.RegexReplace(text, "", @"\[[^\]]+?\] ");
         switch (level)
         {
@@ -160,23 +148,5 @@ public class Logger
     {
         if (ex is ThreadInterruptedException) return;
         // TODO Exception log
-    }
-
-    private readonly Lock _logFlushLock = new();
-
-    private void Flush()
-    {
-        if(_logWriter == null) return;
-        string log = "";
-        lock (_logFlushLock)
-        {
-            if (_logList.Length > 0)
-            {
-                StringBuilder logListCache = _logList;
-                _logList = new StringBuilder();
-                log = logListCache.ToString();
-            }
-        }
-        _logWriter.Write(log);
     }
 }
