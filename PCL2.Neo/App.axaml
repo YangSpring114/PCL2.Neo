@@ -17,7 +17,7 @@
 
             <FontFamily x:Key="Pcl2English">avares://PCL2.Neo/Assets/Font.ttf#PCL English</FontFamily>
 
-            <!--  颜色表  -->
+            <!--  ้ข่ฒ่กจ  -->
             <SolidColorBrush x:Key="ColorBrush1">#343d4a</SolidColorBrush>
             <SolidColorBrush x:Key="ColorBrush2">#0b5bcb</SolidColorBrush>
             <SolidColorBrush x:Key="ColorBrush3">#1370f3</SolidColorBrush>

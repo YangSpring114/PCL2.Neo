@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Avalonia.Animation;
 
 namespace PCL2.Neo.Animations;
