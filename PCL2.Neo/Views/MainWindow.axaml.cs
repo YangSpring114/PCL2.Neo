@@ -6,37 +6,37 @@ using PCL2.Neo.Helpers;
 namespace PCL2.Neo.Views;
 
 /// <summary>
-/// Ö÷´°¿ÚÀà
+/// ä¸»çª—å£ç±»
 /// </summary>
 public partial class MainWindow : Window
 {
     /// <summary>
-    /// Ö÷´°¿ÚµÄ¹¹Ôìº¯Êı£¬³õÊ¼»¯×é¼ş²¢ÉèÖÃÏà¹ØÊÂ¼ş´¦Àí¡£
+    /// ä¸»çª—å£çš„æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–ç»„ä»¶å¹¶è®¾ç½®ç›¸å…³äº‹ä»¶å¤„ç†ã€‚
     /// </summary>
     public MainWindow()
     {
-        // ³õÊ¼»¯×é¼ş£¬°üÀ¨XAMLÖĞ¶¨ÒåµÄËùÓĞ¿Ø¼şºÍ×ÊÔ´¡£
+        // åˆå§‹åŒ–ç»„ä»¶ï¼ŒåŒ…æ‹¬XAMLä¸­å®šä¹‰çš„æ‰€æœ‰æ§ä»¶å’Œèµ„æºã€‚
         InitializeComponent();
 
-        // Îªµ¼º½±³¾°±ß¿òµÄPointerPressedÊÂ¼ş°ó¶¨´¦Àí·½·¨£¬ÒÔ±ã¿ªÊ¼ÍÏ¶¯´°¿Ú¡£
+        // ä¸ºå¯¼èˆªèƒŒæ™¯è¾¹æ¡†çš„PointerPressedäº‹ä»¶ç»‘å®šå¤„ç†æ–¹æ³•ï¼Œä»¥ä¾¿å¼€å§‹æ‹–åŠ¨çª—å£ã€‚
         NavBackgroundBorder.PointerPressed += OnNavPointerPressed;
 
-        // ´´½¨ThemeHelperÊµÀı²¢Ë¢ĞÂÖ÷Ìâ£¬ÒÔÈ·±£Ó¦ÓÃÁËÕıÈ·µÄÖ÷ÌâÑùÊ½¡£
+        // åˆ›å»ºThemeHelperå®ä¾‹å¹¶åˆ·æ–°ä¸»é¢˜ï¼Œä»¥ç¡®ä¿åº”ç”¨äº†æ­£ç¡®çš„ä¸»é¢˜æ ·å¼ã€‚
         new ThemeHelper(this).Refresh();
 
-        // Îª¹Ø±Õ°´Å¥µã»÷ÊÂ¼ş°ó¶¨´¦Àí·½·¨£¬ÓÃÓÚ¹Ø±Õ´°¿Ú¡£
+        // ä¸ºå…³é—­æŒ‰é’®ç‚¹å‡»äº‹ä»¶ç»‘å®šå¤„ç†æ–¹æ³•ï¼Œç”¨äºå…³é—­çª—å£ã€‚
         BtnTitleClose.Click += (_, _) => Close();
 
-        // Îª×îĞ¡»¯°´Å¥µã»÷ÊÂ¼ş°ó¶¨´¦Àí·½·¨£¬ÓÃÓÚ½«´°¿Ú×îĞ¡»¯¡£
+        // ä¸ºæœ€å°åŒ–æŒ‰é’®ç‚¹å‡»äº‹ä»¶ç»‘å®šå¤„ç†æ–¹æ³•ï¼Œç”¨äºå°†çª—å£æœ€å°åŒ–ã€‚
         BtnTitleMin.Click += (_, _) => WindowState = WindowState.Minimized;
     }
     /// <summary>
-    /// µ±µ¼º½±³¾°±ß¿ò±»°´ÏÂÊ±µ÷ÓÃ£¬¿ªÊ¼ÒÆ¶¯ÍÏ×§´°¿ÚµÄ²Ù×÷¡£
+    /// å½“å¯¼èˆªèƒŒæ™¯è¾¹æ¡†è¢«æŒ‰ä¸‹æ—¶è°ƒç”¨ï¼Œå¼€å§‹ç§»åŠ¨æ‹–æ‹½çª—å£çš„æ“ä½œã€‚
     /// </summary>
-    /// <param name="sender">ÊÂ¼ş·¢ËÍÕß¡£</param>
-    /// <param name="e">°üº¬ÊÂ¼şÊı¾İµÄPointerPressedEventArgs¡£</param>
+    /// <param name="sender">äº‹ä»¶å‘é€è€…ã€‚</param>
+    /// <param name="e">åŒ…å«äº‹ä»¶æ•°æ®çš„PointerPressedEventArgsã€‚</param>
     private void OnNavPointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e) {
-        // ¿ªÊ¼ÍÏ×§²Ù×÷£¬ÔÊĞíÓÃ»§Í¨¹ıÊó±êÍÏ¶¯´°¿Ú¡£
+        // å¼€å§‹æ‹–æ‹½æ“ä½œï¼Œå…è®¸ç”¨æˆ·é€šè¿‡é¼ æ ‡æ‹–åŠ¨çª—å£ã€‚
         this.BeginMoveDrag(e);
     }
 }
