@@ -192,6 +192,18 @@ public static class StringUtils
         }
     }
 
+    public static bool TryToDouble(this string str, out double result)
+    {
+        if (double.TryParse(str, out var numResult))
+        {
+            result = numResult;
+            return true;
+        }
+
+        result = double.NaN;
+        return false;
+    }
+
     /// <summary>
     /// 为字符串进行 XML 转义。
     /// </summary>
