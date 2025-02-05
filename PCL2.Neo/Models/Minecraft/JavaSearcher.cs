@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -196,14 +196,14 @@ internal class Windows
                 maxDeep: 6));
             if (Directory.Exists(@"C:\Program Files\Java\")) // search program java // Program Files Java搜索
                 javaEntities.AddRange(await SearchFoldersAsync(@"C:\Program Files\Java\", maxDeep: 4));
-            if (Directory.Exists(@"C:\Program Files (x86)\Java\")) // search program x86 java // Program Files (x86) Java搜索
+            if (Directory.Exists(
+                    @"C:\Program Files (x86)\Java\")) // search program x86 java // Program Files (x86) Java搜索
                 javaEntities.AddRange(await SearchFoldersAsync(@"C:\Program files (x86)\Java\", maxDeep: 4));
         }
 
         return javaEntities;
     }
 }
-
 
 /// <summary>
 /// 处理Unix系统下的java
