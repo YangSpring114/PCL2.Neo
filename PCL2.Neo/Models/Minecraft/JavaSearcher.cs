@@ -131,7 +131,6 @@ internal class Windows
         if (fullSearch) javaEntities.AddRange(await DriveJavaEntities(maxDeep)); // full search
         else
         {
-
             var programFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Java");
             var programFileX86 =
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Java");
@@ -149,7 +148,9 @@ internal class Windows
     }
 }
 
-
+/// <summary>
+/// 处理Unix系统下的java
+/// </summary>
 internal class Unix
 {
     public static List<JavaEntity> SerachJava()

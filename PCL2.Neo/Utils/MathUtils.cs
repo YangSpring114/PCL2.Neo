@@ -22,7 +22,7 @@ public static class MathUtils
             scale *= fromRadix;
         }
 
-        var result = "";
+        var result = string.Empty;
         while (realNum > 0)
         {
             var newNum = (int)(realNum % toRadix);
@@ -30,7 +30,7 @@ public static class MathUtils
             result = digits[newNum] + result;
         }
 
-        return (isNegative ? "-" : "") + result;
+        return (isNegative ? "-" : string.Empty) + result;
     }
 
     /// <summary>
