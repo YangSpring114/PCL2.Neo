@@ -16,6 +16,7 @@ public static class MathUtils
         var isNegative = input.StartsWith("-");
         if (isNegative) input = input.TrimStart('-');
         long realNum = 0, scale = 1;
+
         foreach (var digit in input.Reverse().Select(l => digits.IndexOf(l.ToString())))
         {
             realNum += digit * scale;

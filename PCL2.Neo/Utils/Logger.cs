@@ -158,6 +158,7 @@ public class Logger
     public void Log(string text, LogLevel level = LogLevel.Normal, string title = "出现错误")
     {
         string logText = $"[{TimeDateUtils.GetTimeNow()}] {text}{CrLf}";
+
         _logQueue.Enqueue(logText);
 #if DEBUG
         Debug.Write(logText);
