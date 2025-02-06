@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
+using Avalonia.Input;
 using Avalonia.Media;
 using PCL2.Neo.Helpers;
 using PCL2.Neo.Models;
@@ -10,11 +11,12 @@ using PCL2.Neo.Utils;
 
 namespace PCL2.Neo.Controls;
 
-[PseudoClasses(":white", ":highlight", ":checked", ":pointerpressed")]
+[PseudoClasses(":white", ":highlight", ":checked", ":pressed")]
 public class MyRadioButton : TemplatedControl
 {
     private Path? _shapeLogo;
     private TextBlock? _labText;
+    private Border? _panBack;
     
     private bool _isMouseDown = false;
 
@@ -23,6 +25,7 @@ public class MyRadioButton : TemplatedControl
         base.OnApplyTemplate(e);
         _shapeLogo = e.NameScope.Find<Path>("ShapeLogo")!;
         _labText = e.NameScope.Find<TextBlock>("LabText")!;
+        _panBack = e.NameScope.Find<Border>("PanBack")!;
         
         this.Loaded += (_, _) => RefreshColor();
         
@@ -31,6 +34,29 @@ public class MyRadioButton : TemplatedControl
         _labText.Text = Text;
         
         SetPseudoClass();
+    }
+
+    protected override void OnPointerReleased(PointerReleasedEventArgs e)
+    {
+        base.OnPointerReleased(e);
+        if (Checked) return;
+        if (e.InitialPressMouseButton == MouseButton.Left)
+        {
+            _isMouseDown = false;
+            SetCheck();
+            SetPseudoClass();
+        }
+    }
+
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
+    {
+        base.OnPointerPressed(e);
+        if (Checked) return;
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            _isMouseDown = true;
+            SetPseudoClass();
+        }
     }
 
     public int Uuid = CoreUtils.GetUuid();
@@ -130,15 +156,30 @@ public class MyRadioButton : TemplatedControl
         get => GetValue(CheckedProperty);
         set
         {
-            SetPseudoClass();
             SetValue(CheckedProperty, value);
+            SetCheck();
+            SetPseudoClass();
         }
     }
 
+    private void SetCheck()
+    {
+        if (this.Parent is Panel parent)
+        {
+            foreach (var child in parent.Children)
+            {
+                if (child is MyRadioButton radioButton && radioButton != this)
+                {
+                    radioButton.Checked = false;
+                }
+            }
+        }
+    }
+    
     private void SetPseudoClass()
     {
         PseudoClasses.Set(":checked", Checked);
-        PseudoClasses.Set(":pointerpressed", _isMouseDown);
+        PseudoClasses.Set(":pressed", _isMouseDown);
         
         switch (ColorType)
         {
@@ -159,13 +200,13 @@ public class MyRadioButton : TemplatedControl
             case ColorState.White:
                 if (Checked)
                 {
-                    this.Background = (SolidColorBrush)new MyColor(255, 255, 255);
+                    _panBack!.Background = (SolidColorBrush)new MyColor(255, 255, 255);
                     _shapeLogo.Fill = (IBrush?)Application.Current!.Resources["ColorBrush3"];
                     _labText.Foreground = (IBrush?)Application.Current!.Resources["ColorBrush3"];
                 }
                 else
                 {
-                    this.Background = (SolidColorBrush)ThemeHelper.ColorSemiTransparent;
+                    _panBack!.Background = (SolidColorBrush)ThemeHelper.ColorSemiTransparent;
                     _shapeLogo.Fill = (SolidColorBrush)new MyColor(255, 255, 255);
                     _labText.Foreground = (SolidColorBrush)new MyColor(255, 255, 255);
                 }
@@ -173,13 +214,13 @@ public class MyRadioButton : TemplatedControl
             case ColorState.HighLight:
                 if (Checked)
                 {
-                    this.Background = (IBrush?)Application.Current!.Resources["ColorBrush3"];
+                    _panBack!.Background = (IBrush?)Application.Current!.Resources["ColorBrush3"];
                     _shapeLogo.Fill = (SolidColorBrush)new MyColor(255, 255, 255);
                     _labText.Foreground = (SolidColorBrush)new MyColor(255, 255, 255);
                 }
                 else
                 {
-                    this.Background = (SolidColorBrush)ThemeHelper.ColorSemiTransparent;
+                    _panBack!.Background = (SolidColorBrush)ThemeHelper.ColorSemiTransparent;
                     _shapeLogo.Fill = (IBrush?)Application.Current!.Resources["ColorBrush3"];
                     _labText.Foreground = (IBrush?)Application.Current!.Resources["ColorBrush3"];
                 }

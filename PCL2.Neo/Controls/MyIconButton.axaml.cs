@@ -24,11 +24,6 @@ public class MyIconButton : TemplatedControl
         _pathIcon = e.NameScope.Find<Path>("PathIcon")!;
         _panBack = e.NameScope.Find<Border>("PanBack")!;
         
-        // 事件
-        //this.PointerEntered += (_, _) => RefreshColor();
-        //this.PointerExited += (_, _) => RefreshColor();
-        //this.PointerReleased += OnPointerReleased;
-        //this.AddHandler(PointerReleasedEvent, OnPointerReleased, RoutingStrategies.Bubble, true);
         this.Loaded += (_, _) => RefreshColor();
         
         // 初始化
@@ -37,10 +32,11 @@ public class MyIconButton : TemplatedControl
         
         SetPseudoClass();
     }
-    
-    protected override void OnPointerReleased(PointerReleasedEventArgs pointerReleasedEventArgs)
+
+    protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
-        if (pointerReleasedEventArgs.InitialPressMouseButton == MouseButton.Left)
+        base.OnPointerReleased(e);
+        if (e.InitialPressMouseButton == MouseButton.Left)
         {
             OnClick();
             // 这里缺少动画
