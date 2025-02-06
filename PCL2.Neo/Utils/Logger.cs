@@ -11,6 +11,7 @@ namespace PCL2.Neo.Utils;
 public class Logger
 {
     private const int FlushInterval = 150;
+
     public enum LogLevel
     {
         /// <summary>
@@ -59,52 +60,56 @@ public class Logger
     private LogDelegate _assertLogDelegate = _ => { };
     private LogDelegate _msgboxLogDelegate = _ => { };
     private LogDelegate _debugLogDelegate = _ => { };
-    private StreamWriter? _logStream;
-    private ConcurrentQueue<string> _logQueue = new();
-    private System.Timers.Timer _logTimer;
+    private readonly StreamWriter? _logStream;
+    private readonly ConcurrentQueue<string> _logQueue = new();
+    private readonly System.Timers.Timer _logTimer;
 
     public static void InitLogger(string logFilePath)
     {
-        if(_instance == null) _instance = new Logger(logFilePath);
+        if (_instance == null) _instance = new Logger(logFilePath);
     }
 
     public static Logger GetInstance()
     {
-        if(_instance != null) return _instance;
-        else throw new Exception("Logger not initialized.");
+        if (_instance != null) return _instance;
+        throw new Exception("Logger not initialized.");
     }
 
-    public static void Stop() {
-        if(_instance == null) throw new Exception("Logger not initialized.");
-        if(_instance._logTimer!=null) {
-            _instance.Flush();
-            _instance._logTimer.Stop();
-        }
-        if(_instance._logStream!=null) { 
+    public static void Stop()
+    {
+        if (_instance == null) throw new Exception("Logger not initialized.");
+        _instance.Flush();
+        _instance._logTimer.Stop();
+        if (_instance._logStream != null)
+        {
             _instance._logStream.Flush();
             _instance._logStream.Dispose();
         }
-        _instance=null;
+
+        _instance = null;
     }
 
     private Logger(string logFilePath)
     {
-        bool _isInitSuccess = true;
+        bool isInitSuccess = true;
+        _logTimer = new System.Timers.Timer(FlushInterval) { AutoReset = true };
+        _logTimer.Elapsed += (_, _) => Flush();
         try
         {
             File.Create($"{logFilePath}Log1.txt").Dispose();
         }
         catch (IOException ex)
         {
-            _isInitSuccess = false;
+            isInitSuccess = false;
             Log(ex, "日志初始化失败（疑似文件占用问题）");
         }
         catch (Exception ex)
         {
-            _isInitSuccess = false;
+            isInitSuccess = false;
             Log(ex, "日志初始化失败", LogLevel.Developer);
         }
-        if(!_isInitSuccess) return;
+
+        if (!isInitSuccess) return;
         try
         {
             _logStream = new StreamWriter($"{logFilePath}Log1.txt");
@@ -114,23 +119,29 @@ public class Logger
             _logStream = null;
             Log(ex, "日志写入失败", LogLevel.Hint);
         }
-        _logTimer = new System.Timers.Timer(FlushInterval) {
-            AutoReset = true,
-            Enabled = true
-        };
-        _logTimer.Elapsed += (obj,e) => Flush();
+
+        _logTimer.Start();
     }
 
-    private void Flush() {
-            if (_logStream != null) {
-                string? log;
-                while (!_logQueue.IsEmpty) {
-                    if(_logQueue.TryDequeue(out log) && log!=null) {
-                        _logStream.Write(log);
-                    }
+    private void Flush()
+    {
+        if (_logStream != null)
+        {
+            string? log;
+            while (!_logQueue.IsEmpty)
+            {
+                if (_logQueue.TryDequeue(out log))
+                {
+                    _logStream.Write(log);
                 }
             }
+        }
+        else
+        {
+            _logQueue.Clear();
+        }
     }
+
     public void SetDelegate(LogLevel level, LogDelegate logDelegate)
     {
         switch (level)
@@ -148,10 +159,10 @@ public class Logger
     {
         string logText = $"[{TimeDateUtils.GetTimeNow()}] {text}{CrLf}";
         _logQueue.Enqueue(logText);
-#if DEBUG 
-        Debug.Write(logText);        
+#if DEBUG
+        Debug.Write(logText);
 #endif
-        string msg = Regex.Replace(text,@"\[[^\]]+?\] ","");
+        string msg = Regex.Replace(text, @"\[[^\]]+?\] ", "");
         switch (level)
         {
 #if DEBUG
