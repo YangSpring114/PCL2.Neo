@@ -8,11 +8,12 @@ using Avalonia.Media;
 using PCL2.Neo.Helpers;
 using PCL2.Neo.Models;
 using PCL2.Neo.Utils;
+using System;
 
 namespace PCL2.Neo.Controls;
 
-[PseudoClasses(":white", ":highlight", ":checked", ":pressed")]
-public class MyRadioButton : TemplatedControl
+[PseudoClasses(":white", ":highlight")]
+public class MyRadioButton : RadioButton
 {
     private Path? _shapeLogo;
     private TextBlock? _labText;
@@ -34,29 +35,6 @@ public class MyRadioButton : TemplatedControl
         _labText.Text = Text;
         
         SetPseudoClass();
-    }
-
-    protected override void OnPointerReleased(PointerReleasedEventArgs e)
-    {
-        base.OnPointerReleased(e);
-        if (Checked) return;
-        if (e.InitialPressMouseButton == MouseButton.Left)
-        {
-            _isMouseDown = false;
-            SetCheck();
-            SetPseudoClass();
-        }
-    }
-
-    protected override void OnPointerPressed(PointerPressedEventArgs e)
-    {
-        base.OnPointerPressed(e);
-        if (Checked) return;
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-        {
-            _isMouseDown = true;
-            SetPseudoClass();
-        }
     }
 
     public int Uuid = CoreUtils.GetUuid();
@@ -129,39 +107,8 @@ public class MyRadioButton : TemplatedControl
             SetPseudoClass();
         }
     }
-
-    public new static readonly StyledProperty<IBrush> BackgroundProperty = AvaloniaProperty.Register<MyRadioButton, IBrush>(
-        nameof(Background));
-
-    public new IBrush Background
-    {
-        get => GetValue(BackgroundProperty);
-        set => SetValue(BackgroundProperty, value);
-    }
-
-    public new static readonly StyledProperty<IBrush> ForegroundProperty = AvaloniaProperty.Register<MyRadioButton, IBrush>(
-        nameof(Foreground));
-
-    public new IBrush Foreground
-    {
-        get => GetValue(ForegroundProperty);
-        set => SetValue(ForegroundProperty, value);
-    }
     
-    public static readonly StyledProperty<bool> CheckedProperty = AvaloniaProperty.Register<MyRadioButton, bool>(
-        nameof(Checked));
-
-    public bool Checked
-    {
-        get => GetValue(CheckedProperty);
-        set
-        {
-            SetValue(CheckedProperty, value);
-            SetCheck();
-            SetPseudoClass();
-        }
-    }
-
+    [Obsolete]
     private void SetCheck()
     {
         if (this.Parent is Panel parent)
@@ -170,17 +117,14 @@ public class MyRadioButton : TemplatedControl
             {
                 if (child is MyRadioButton radioButton && radioButton != this)
                 {
-                    radioButton.Checked = false;
+                    radioButton.IsChecked = false;
                 }
             }
         }
     }
     
     private void SetPseudoClass()
-    {
-        PseudoClasses.Set(":checked", Checked);
-        PseudoClasses.Set(":pressed", _isMouseDown);
-        
+    {        
         switch (ColorType)
         {
             case ColorState.White:
@@ -198,7 +142,7 @@ public class MyRadioButton : TemplatedControl
         switch (ColorType)
         {
             case ColorState.White:
-                if (Checked)
+                if (IsChecked.Value)
                 {
                     _panBack!.Background = (SolidColorBrush)new MyColor(255, 255, 255);
                     _shapeLogo.Fill = (IBrush?)Application.Current!.Resources["ColorBrush3"];
@@ -212,7 +156,7 @@ public class MyRadioButton : TemplatedControl
                 }
                 break;
             case ColorState.HighLight:
-                if (Checked)
+                if (IsChecked.Value)
                 {
                     _panBack!.Background = (IBrush?)Application.Current!.Resources["ColorBrush3"];
                     _shapeLogo.Fill = (SolidColorBrush)new MyColor(255, 255, 255);

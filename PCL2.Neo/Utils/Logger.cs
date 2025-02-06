@@ -125,7 +125,7 @@ public class Logger
         string logText = $"[{TimeDateUtils.GetTimeNow()}] {text}{CrLf}";
         if(_logWriter != null) _logWriter.WriteAsync(logText);
 #if DEBUG 
-        Debug.Write(logText);        
+        Debug.Write(logText);
 #endif
         string msg = StringUtils.RegexReplace(text, "", @"\[[^\]]+?\] ");
         switch (level)

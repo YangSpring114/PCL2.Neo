@@ -16,11 +16,11 @@ public static class MathUtils
         var isNegative = input.StartsWith("-");
         if (isNegative) input = input.TrimStart('-');
         long realNum = 0, scale = 1;
-        foreach (var digit in input.Reverse().Select(l => digits.IndexOfF(l.ToString())))
-        {
-            realNum += digit * scale;
-            scale *= fromRadix;
-        }
+        //foreach (var digit in input.Reverse().Select(l => digits.IndexOfF(l.ToString())))
+        //{
+        //    realNum += digit * scale;
+        //    scale *= fromRadix;
+        //}
 
         var result = string.Empty;
         while (realNum > 0)
