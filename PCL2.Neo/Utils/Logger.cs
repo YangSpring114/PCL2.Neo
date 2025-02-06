@@ -2,15 +2,15 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using static PCL2.Neo.Const;
 
 namespace PCL2.Neo.Utils;
 
 public class Logger
 {
+    private const int FlushInterval = 150;
     public enum LogLevel
     {
         /// <summary>
@@ -59,7 +59,9 @@ public class Logger
     private LogDelegate _assertLogDelegate = _ => { };
     private LogDelegate _msgboxLogDelegate = _ => { };
     private LogDelegate _debugLogDelegate = _ => { };
-    private StreamWriter? _logWriter;
+    private StreamWriter? _logStream;
+    private ConcurrentQueue<string> _logQueue = new();
+    private System.Timers.Timer _logTimer;
 
     public static void InitLogger(string logFilePath)
     {
@@ -74,7 +76,14 @@ public class Logger
 
     public static void Stop() {
         if(_instance == null) throw new Exception("Logger not initialized.");
-        if(_instance._logWriter!=null) _instance._logWriter.Dispose();
+        if(_instance._logTimer!=null) {
+            _instance.Flush();
+            _instance._logTimer.Stop();
+        }
+        if(_instance._logStream!=null) { 
+            _instance._logStream.Flush();
+            _instance._logStream.Dispose();
+        }
         _instance=null;
     }
 
@@ -98,15 +107,30 @@ public class Logger
         if(!_isInitSuccess) return;
         try
         {
-            _logWriter = new StreamWriter($"{logFilePath}Log1.txt");
+            _logStream = new StreamWriter($"{logFilePath}Log1.txt");
         }
         catch (Exception ex)
         {
-            _logWriter = null;
+            _logStream = null;
             Log(ex, "日志写入失败", LogLevel.Hint);
         }
+        _logTimer = new System.Timers.Timer(FlushInterval) {
+            AutoReset = true,
+            Enabled = true
+        };
+        _logTimer.Elapsed += (obj,e) => Flush();
     }
 
+    private void Flush() {
+            if (_logStream != null) {
+                string? log;
+                while (!_logQueue.IsEmpty) {
+                    if(_logQueue.TryDequeue(out log) && log!=null) {
+                        _logStream.Write(log);
+                    }
+                }
+            }
+    }
     public void SetDelegate(LogLevel level, LogDelegate logDelegate)
     {
         switch (level)
@@ -123,11 +147,11 @@ public class Logger
     public void Log(string text, LogLevel level = LogLevel.Normal, string title = "出现错误")
     {
         string logText = $"[{TimeDateUtils.GetTimeNow()}] {text}{CrLf}";
-        if(_logWriter != null) _logWriter.WriteAsync(logText);
+        _logQueue.Enqueue(logText);
 #if DEBUG 
         Debug.Write(logText);        
 #endif
-        string msg = StringUtils.RegexReplace(text, "", @"\[[^\]]+?\] ");
+        string msg = Regex.Replace(text,@"\[[^\]]+?\] ","");
         switch (level)
         {
 #if DEBUG
