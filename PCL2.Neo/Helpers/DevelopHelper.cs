@@ -14,8 +14,13 @@ public class DevelopHelper
         L.SetDelegate(Logger.LogLevel.Feedback, (s) => {
             Console.WriteLine($"FEEDBACK:{s}");
         });
-        L.Log("Hello");
+        L.Log($"Start:{new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds()}",Logger.LogLevel.Feedback);
+        for (int i = 0; i < 20000; i++)
+        {
+            L.Log("Hello");
+        }
         L.Log("FeedBack",Logger.LogLevel.Feedback);
+        L.Log($"End:{new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds()}",Logger.LogLevel.Feedback);
         Logger.Stop();
     }
 }
