@@ -1,11 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.Json;
-using System.Text.RegularExpressions;
+using System.Text.Json.Serialization;
 
 #pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑声明为可以为 null。
 
@@ -69,9 +63,9 @@ namespace PCL2.Neo.Models.Minecraft.McVersion
 
         public record JvmRulesElements
         {
-            public string? FirstAction { get; init; }
-            public string Action { get; init; }
-            public List<OsElements> Os { get; init; }
+            public string? FirstAction { get; set; }
+            public string Action { get; set; }
+            public List<OsElements> Os { get; set; }
         }
 
         public record JvmRulesList
@@ -92,11 +86,11 @@ namespace PCL2.Neo.Models.Minecraft.McVersion
             public Jvm Jvm { get; init; }
         }
 
-        public record AssestIndex
+        public record AssetIndex
         {
             public string Id { get; init; }
             public string Sha1 { get; init; }
-            public string Size { get; init; }
+            public int Size { get; init; }
             public int TotalSize { get; init; }
             public string Url { get; init; }
         }
@@ -111,8 +105,13 @@ namespace PCL2.Neo.Models.Minecraft.McVersion
         public record Downloads
         {
             public DownloadsEneemltValue Client { get; init; }
+
+            [JsonPropertyName("client_mappings")]
             public DownloadsEneemltValue ClientMappings { get; init; }
+
             public DownloadsEneemltValue Server { get; init; }
+
+            [JsonPropertyName("server_mappings")]
             public DownloadsEneemltValue ServerMappings { get; init; }
         }
 
@@ -124,25 +123,45 @@ namespace PCL2.Neo.Models.Minecraft.McVersion
 
         public record Artifact
         {
+            [JsonPropertyName("path")]
             public string Path { get; init; }
+
+            [JsonPropertyName("sha1")]
             public string Sha1 { get; init; }
+
+            [JsonPropertyName("size")]
             public int Size { get; init; }
+
+            [JsonPropertyName("url")]
             public string Url { get; init; }
         }
 
         public record LibrariesDownloads
         {
-            public Artifact Artifact { get; set; }
+            public Artifact? Artifact { get; set; }
             public List<(string, Artifact)>? Classifiers { get; set; }
             public string Name { get; set; }
             public List<(string, string)>? Natives { get; set; }
             public JvmRulesElements? Rules { get; set; }
+            public List<string> Exclude { get; set; }
         }
 
         public record LibrariesNameUrl
         {
+            [JsonPropertyName("name")]
             public string Name { get; set; }
-            public string Url { get; set; }
+
+            [JsonPropertyName("url")]
+            public string? Url { get; set; }
+
+            [JsonPropertyName("checksums")]
+            public List<string> CheckSums { get; set; }
+
+            [JsonPropertyName("serverreq")]
+            public bool? ServerReq { get; set; }
+
+            [JsonPropertyName("clientreq")]
+            public bool? ClientReq { get; set; }
         }
 
         public record Libraries
@@ -173,274 +192,92 @@ namespace PCL2.Neo.Models.Minecraft.McVersion
 
         public record Temp
         {
-            public AssestIndex AssestIndex { get; init; }
+            [JsonPropertyName("assetIndex")]
+            public AssetIndex AssetIndex { get; init; }
+
+            [JsonPropertyName("assets")]
             public string Assets { get; init; }
+
+            [JsonPropertyName("complianceLevel")]
             public byte ComplianceLevel { get; init; }
+
+            [JsonPropertyName("downloads")]
             public Downloads Downloads { get; init; }
+
+            [JsonPropertyName("id")]
             public string Id { get; init; }
+
+            [JsonPropertyName("javaVersion")]
             public JavaVersion JavaVersion { get; init; }
+
+            [JsonPropertyName("logging")]
             public Logging Logging { get; init; }
+
+            [JsonPropertyName("mainClass")]
             public string MainClass { get; init; }
+
+            [JsonPropertyName("minimumLauncherVersion")]
             public byte MinimunLauncherVersion { get; init; }
+
+            [JsonPropertyName("releaseTime")]
             public string ReleaseTime { get; init; }
+
+            [JsonPropertyName("time")]
             public string Time { get; init; }
+
+            [JsonPropertyName("type")]
             public string Type { get; init; }
+
+            [JsonPropertyName("clientVersion")]
+            public string? ClientVersion { get; init; }
         }
 
         public record VersionData
         {
-            public Arguments Arguments { get; init; }
-            public AssestIndex AssestIndex { get; init; }
-            public string Assets { get; init; }
-            public byte ComplianceLevel { get; init; }
-            public Downloads Downloads { get; init; }
-            public string Id { get; init; }
-            public JavaVersion JavaVersion { get; init; }
-            public Libraries Libraries { get; init; }
-            public Logging Logging { get; init; }
-            public string MainClass { get; init; }
-            public byte MinimunLauncherVersion { get; init; }
-            public string ReleaseTime { get; init; }
-            public string Time { get; init; }
-            public string Type { get; init; }
-        }
+            [JsonPropertyName("arguments")]
+            public Arguments? Arguments { get; set; }
 
-        public partial class Version
-        {
-            private static GameRulesList GameRulesListParser(JsonElement element)
-            {
-                var rulesList = new GameRulesList { Rules = [], Value = [] };
+            [JsonPropertyName("assetIndex")]
+            public AssetIndex AssetIndex { get; set; }
 
-                var rules = element.GetProperty("rules").EnumerateArray().ElementAt(0);
-                //var values = element.GetProperty("value").EnumerateArray();
-                var values = element.GetProperty("value");
+            [JsonPropertyName("assets")]
+            public string Assets { get; set; }
 
-                var action = rules.GetProperty("action").GetString()!;
-                var features = rules.GetProperty("features");
+            [JsonPropertyName("complianceLevel")]
+            public byte ComplianceLevel { get; set; }
 
-                var ruleElement = new GameRulesElements
-                {
-                    Action = action,
-                    RulesFeature = new RulesFeaturesElements
-                    {
-                        Name = RulesNameRegex().Match(features.GetRawText()).Groups[1].Value,
-                        Value = features.GetRawText().Contains("true")
-                    }
-                };
+            [JsonPropertyName("downloads")]
+            public Downloads Downloads { get; set; }
 
-                // add values
-                switch (values.ValueKind)
-                {
-                    case JsonValueKind.Array:
-                        {
-                            foreach (var item in values.EnumerateArray()) rulesList.Value.Add(item.GetString()!);
-                            break;
-                        }
-                    case JsonValueKind.String:
-                        rulesList.Value.Add(values.GetString()!);
-                        break;
-                    default:
-                        throw new JsonException("Unknown JsonValueKind");
-                }
+            [JsonPropertyName("id")]
+            public string Id { get; set; }
 
-                rulesList.Rules.Add(ruleElement);
+            [JsonPropertyName("javaVersion")]
+            public JavaVersion JavaVersion { get; set; }
 
-                return rulesList;
-            }
+            [JsonPropertyName("libraries")]
+            public Libraries Libraries { get; set; }
 
-            private static Game GameParser(JsonElement element)
-            {
-                var enummerable = element.EnumerateArray();
-                var game = new Game { GameRules = [], Value = [] };
+            [JsonPropertyName("logging")]
+            public Logging Logging { get; set; }
 
-                foreach (var item in enummerable)
-                {
-                    switch (item.ValueKind)
-                    {
-                        case JsonValueKind.String:
-                            game.Value.Add(item.GetString()!);
-                            break;
-                        case JsonValueKind.Object:
-                            game.GameRules.Add(GameRulesListParser(item));
-                            break;
-                        default:
-                            throw new JsonException("Unknown JsonValueKind");
-                    }
-                }
+            [JsonPropertyName("mainClass")]
+            public string MainClass { get; set; }
 
-                return game;
-            }
+            [JsonPropertyName("minimumLauncherVersion")]
+            public byte MinimunLauncherVersion { get; set; }
 
-            private static JvmRulesElements JvmRulesElementsParser(JsonElement element)
-            {
-                var os = element.GetProperty("os").GetRawText();
+            [JsonPropertyName("releaseTime")]
+            public string ReleaseTime { get; set; }
 
-                return new JvmRulesElements
-                {
-                    Action = element.GetProperty("action").GetString()!,
-                    Os =
-                    [
-                        new OsElements()
-                        {
-                            Name = RulesNameRegex().Match(os).Groups[1].Value,
-                            Value = JvmOsValueRegex().Match(os).Groups[1].Value
-                        }
-                    ]
-                };
-            }
+            [JsonPropertyName("time")]
+            public string Time { get; set; }
 
-            private static JvmRulesList JvmRulesListParser(JsonElement element)
-            {
-                var result = new JvmRulesList { Rules = [], Value = [] };
+            [JsonPropertyName("type")]
+            public string Type { get; set; }
 
-                var rules = element.GetProperty("rules").EnumerateArray().ElementAt(0);
-                var values = element.GetProperty("value");
-
-                result.Rules.Add(JvmRulesElementsParser(rules));
-
-                switch (values.ValueKind)
-                {
-                    case JsonValueKind.Array:
-                        {
-                            var valArray = values.EnumerateArray();
-                            foreach (var item in valArray) result.Value.Add(item.GetString()!);
-                            break;
-                        }
-                    case JsonValueKind.String:
-                        result.Value.Add(values.GetString()!);
-                        break;
-                    default:
-                        throw new JsonException("Unknown JsonValueKind");
-                }
-
-                return result;
-            }
-
-            private static Jvm JvmParser(JsonElement element)
-            {
-                var enummerable = element.EnumerateArray();
-                var jvm = new Jvm { Rules = [], Value = [] };
-
-                foreach (var item in enummerable)
-                {
-                    switch (item.ValueKind)
-                    {
-                        case JsonValueKind.Object:
-                            jvm.Rules.Add(JvmRulesListParser(item));
-                            break;
-                        case JsonValueKind.String:
-                            jvm.Value.Add(item.GetString()!);
-                            break;
-                        default:
-                            throw new JsonException("Unknown JsonValueKind");
-                    }
-                }
-
-                return jvm;
-            }
-
-            private static Arguments ArgumentsParser(JsonElement element)
-            {
-                var game = GameParser(element.GetProperty("game"));
-                var jvm = JvmParser(element.GetProperty("jvm"));
-                return new Arguments { Game = game, Jvm = jvm };
-            }
-
-            private static LibrariesDownloads DowloadParser(JsonElement element)
-            {
-                var artifact = element.GetProperty("downloads").GetProperty("artifact").GetRawText();
-                var name = element.GetProperty("name").GetString()!;
-
-                if (element.TryGetProperty("rules", out var rules))
-                {
-                    //return new LibrariesDownloads
-                    //{
-                    //    Artifact = JsonSerializer.Deserialize<Artifact>(artifact)!,
-                    //    Name = name,
-                    //    Rules = JvmRulesElementsParser(rules.EnumerateArray().ElementAt(0))
-                    //};
-                    // TODO: add code
-                }
-                else
-                {
-                    //return new LibrariesDownloads
-                    //{
-                    //    Artifact = JsonSerializer.Deserialize<Artifact>(artifact)!, Name = name, Rules = null
-                    //};
-                    // TODO: add code
-                }
-            }
-
-            private static Libraries LibrariesParser(JsonElement element)
-            {
-                var array = element.EnumerateArray();
-                var result = new Libraries { Downloads = [], NameUrls = [] };
-
-                foreach (var item in array)
-                {
-                    if (item.TryGetProperty("downloads", out _))
-                    {
-                        result.Downloads.Add(DowloadParser(item));
-                    }
-                    else
-                    {
-                        result.NameUrls.Add(JsonSerializer.Deserialize<LibrariesNameUrl>(item.GetRawText())!);
-                    }
-                }
-
-                return result;
-            }
-
-            private static Temp RebuildJson(JsonElement element)
-            {
-                var root = element.EnumerateObject();
-                var result = new StringBuilder("{");
-                foreach (var pro in root.Where(pro => pro.Name != "arguments" && pro.Name != "libraries"))
-                {
-                    result.Append($"{pro},");
-                }
-
-                result.Remove(result.Length - 1, 1).Append("}");
-
-                var str = result.ToString();
-                //Console.WriteLine(str);
-
-                return JsonSerializer.Deserialize<Temp>(str)!;
-            }
-
-            public static VersionData Parser(string input)
-            {
-                var root = JsonDocument.Parse(input).RootElement;
-                var arguments = root.GetProperty("arguments");
-
-                var argumentsJson = ArgumentsParser(arguments);
-                var rebuild = RebuildJson(root);
-                var libraries = LibrariesParser(root.GetProperty("libraries"));
-
-                return new VersionData
-                {
-                    Arguments = argumentsJson,
-                    AssestIndex = rebuild.AssestIndex,
-                    Assets = rebuild.Assets,
-                    ComplianceLevel = rebuild.ComplianceLevel,
-                    Downloads = rebuild.Downloads,
-                    Id = rebuild.Id,
-                    JavaVersion = rebuild.JavaVersion,
-                    Libraries = libraries,
-                    Logging = rebuild.Logging,
-                    MainClass = rebuild.MainClass,
-                    MinimunLauncherVersion = rebuild.MinimunLauncherVersion,
-                    ReleaseTime = rebuild.ReleaseTime,
-                    Time = rebuild.Time,
-                    Type = rebuild.Type
-                };
-            }
-
-            [GeneratedRegex(@"""([^""]+)""\s*:\s*true")]
-            private static partial Regex RulesNameRegex();
-
-            [GeneratedRegex(@"(?<=""name"":\s*)""([^""]+)""")]
-            private static partial Regex JvmOsValueRegex();
+            [JsonPropertyName("clientVersion")]
+            public string? ClientVersion { get; set; }
         }
     }
 }
