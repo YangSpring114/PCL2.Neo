@@ -1,11 +1,12 @@
 <Window
     Background="Transparent"
-    Height="485"
+    Height="500"
     MinHeight="470"
     MinWidth="810"
     SystemDecorations="None"
     Title="PCL2 Neo"
-    Width="855"
+    Width="850"
+    WindowStartupLocation="CenterScreen"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
@@ -18,7 +19,7 @@
     <Border
         BoxShadow="0 0 15 2 #50000000"
         CornerRadius="8"
-        Margin="10"
+        Margin="18"
         Name="MainBorder">
         <Border ClipToBounds="True" CornerRadius="8">
             <Grid RowDefinitions="Auto 1*">

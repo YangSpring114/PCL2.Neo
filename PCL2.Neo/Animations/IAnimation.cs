@@ -12,13 +12,13 @@ public interface IAnimation
     /// </summary>
     Animatable Control { get; set; }
     /// <summary>
-    /// 动画类。
-    /// </summary>
-    Animation Animation { get; }
-    /// <summary>
     /// 动画时间。
     /// </summary>
     TimeSpan Duration { get; set; }
+    /// <summary>
+    /// 延迟。
+    /// </summary>
+    TimeSpan Delay { get; set; }
     /// <summary>
     /// 缓动效果。
     /// </summary>
@@ -26,5 +26,5 @@ public interface IAnimation
     /// <summary>
     /// 异步形式执行动画。
     /// </summary>
-    void RunAsync();
+    Task RunAsync();
 }
