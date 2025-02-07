@@ -18,7 +18,7 @@ public class DevelopHelper
         L.Log($"Start:{new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds()}",Logger.LogLevel.Feedback);
         for (int i = 0; i < 20000; i++)
         {
-            L.Log("Hello");
+            L.Log($"Hello {i}");
         }
         L.Log("FeedBack",Logger.LogLevel.Feedback);
         L.Log($"End:{new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds()}",Logger.LogLevel.Feedback);
