@@ -5,13 +5,14 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using static PCL2.Neo.Const;
 
 namespace PCL2.Neo.Utils;
 
 public class Logger
 {
+    private const int FlushInterval = 150;
+
     public enum LogLevel
     {
         /// <summary>
@@ -60,51 +61,85 @@ public class Logger
     private LogDelegate _assertLogDelegate = _ => { };
     private LogDelegate _msgboxLogDelegate = _ => { };
     private LogDelegate _debugLogDelegate = _ => { };
-    private StreamWriter? _logWriter;
+    private readonly StreamWriter? _logStream;
+    private readonly ConcurrentQueue<string> _logQueue = new();
+    private readonly System.Timers.Timer _logTimer;
 
     public static void InitLogger(string logFilePath)
     {
-        if(_instance == null) _instance = new Logger(logFilePath);
+        if (_instance == null) _instance = new Logger(logFilePath);
     }
 
     public static Logger GetInstance()
     {
-        if(_instance != null) return _instance;
-        else throw new Exception("Logger not initialized.");
+        if (_instance != null) return _instance;
+        throw new Exception("Logger not initialized.");
     }
 
-    public static void Stop() {
-        if(_instance == null) throw new Exception("Logger not initialized.");
-        if(_instance._logWriter!=null) _instance._logWriter.Dispose();
-        _instance=null;
+    public static void Stop()
+    {
+        if (_instance == null) throw new Exception("Logger not initialized.");
+        _instance.Flush();
+        _instance._logTimer.Stop();
+        if (_instance._logStream != null)
+        {
+            _instance._logStream.Flush();
+            _instance._logStream.Dispose();
+        }
+
+        _instance = null;
     }
 
     private Logger(string logFilePath)
     {
-        bool _isInitSuccess = true;
+        bool isInitSuccess = true;
+        _logTimer = new System.Timers.Timer(FlushInterval) { AutoReset = true };
+        _logTimer.Elapsed += (_, _) => Flush();
         try
         {
             File.Create($"{logFilePath}Log1.txt").Dispose();
         }
         catch (IOException ex)
         {
-            _isInitSuccess = false;
+            isInitSuccess = false;
             Log(ex, "日志初始化失败（疑似文件占用问题）");
         }
         catch (Exception ex)
         {
-            _isInitSuccess = false;
+            isInitSuccess = false;
             Log(ex, "日志初始化失败", LogLevel.Developer);
         }
-        if(!_isInitSuccess) return;
+
+        if (!isInitSuccess) return;
         try
         {
-            _logWriter = new StreamWriter($"{logFilePath}Log1.txt");
+            _logStream = new StreamWriter($"{logFilePath}Log1.txt");
         }
         catch (Exception ex)
         {
-            _logWriter = null;
+            _logStream = null;
             Log(ex, "日志写入失败", LogLevel.Hint);
+        }
+
+        _logTimer.Start();
+    }
+
+    private void Flush()
+    {
+        if (_logStream != null)
+        {
+            string? log;
+            while (!_logQueue.IsEmpty)
+            {
+                if (_logQueue.TryDequeue(out log))
+                {
+                    _logStream.Write(log);
+                }
+            }
+        }
+        else
+        {
+            _logQueue.Clear();
         }
     }
 
@@ -124,9 +159,10 @@ public class Logger
     public void Log(string text, LogLevel level = LogLevel.Normal, string title = "出现错误")
     {
         string logText = $"[{TimeDateUtils.GetTimeNow()}] {text}{CrLf}";
-        if(_logWriter != null) _logWriter.WriteAsync(logText);
-#if DEBUG 
-        Debug.Write(logText);        
+
+        _logQueue.Enqueue(logText);
+#if DEBUG
+        Debug.Write(logText);
 #endif
         string msg = Regex.Replace(text, @"\[[^\]]+?\] ", string.Empty);
         switch (level)
