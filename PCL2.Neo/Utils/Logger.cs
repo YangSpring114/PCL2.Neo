@@ -109,6 +109,7 @@ public class Logger
             isInitSuccess = false;
             Log(ex, "日志初始化失败", LogLevel.Developer);
         }
+        _logTimer.Start();
 
         if (!isInitSuccess) return;
         try
@@ -120,8 +121,6 @@ public class Logger
             _logStream = null;
             Log(ex, "日志写入失败", LogLevel.Hint);
         }
-
-        _logTimer.Start();
     }
 
     private void Flush()
@@ -172,7 +171,7 @@ public class Logger
             case LogLevel.Debug: _debugLogDelegate.Invoke(msg); break;
 #else
             case LogLevel.Developer: break;
-            case LogLevel.Debug: debugLogDelegate.Invoke(msg); break; // TODO modedebug
+            case LogLevel.Debug: _debugLogDelegate.Invoke(msg); break; // TODO modedebug
 #endif
             case LogLevel.Hint: _hintLogDelegate.Invoke(msg); break;
             case LogLevel.Msgbox: _msgboxLogDelegate.Invoke(msg); break;
