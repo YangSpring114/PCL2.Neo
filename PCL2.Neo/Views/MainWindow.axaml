@@ -76,7 +76,6 @@
                                 Text="Neo"
                                 VerticalAlignment="Center" />
                         </Border>
-
                         <Border
                             Background="#9BF00B"
                             CornerRadius="5"
@@ -183,6 +182,13 @@
                             Text="{DynamicResource LangTitleOther}" />
                     </StackPanel>
                 </Border>
+
+                <Grid Grid.Row="1" Name="PanMain">
+                    <StackPanel Orientation="Vertical">
+                        <pc:MyButton Margin="100" />
+                        <pc:MyButton Margin="100" />
+                    </StackPanel>
+                </Grid>
             </Grid>
         </Border>
     </Border>

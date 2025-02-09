@@ -19,14 +19,27 @@ public class AnimationHelper
     {
         Animations = animations;
         Tasks = new List<Task>();
-        foreach (IAnimation animation in Animations)
-        {
-            Tasks.Add(animation.RunAsync());
-        }
     }
 
     public async Task RunAsync()
     {
+        Tasks.Clear();
+        foreach (IAnimation animation in Animations)
+        {
+            Tasks.Add(animation.RunAsync());
+        }
         await Task.WhenAll(Tasks);
+    }
+    public void Cancel()
+    {
+        foreach (IAnimation animation in Animations)
+        {
+            animation.Cancel();
+        }
+    }
+    public void CancelAndClear()
+    {
+        Cancel();
+        Animations.Clear();
     }
 }
