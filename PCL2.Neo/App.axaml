@@ -17,7 +17,7 @@
 
             <FontFamily x:Key="Pcl2English">avares://PCL2.Neo/Assets/Font.ttf#PCL English</FontFamily>
 
-            <!--  ้ข่ฒ่กจ  -->
+            <!--  颜色表  -->
             <SolidColorBrush x:Key="ColorBrush1">#343d4a</SolidColorBrush>
             <SolidColorBrush x:Key="ColorBrush2">#0b5bcb</SolidColorBrush>
             <SolidColorBrush x:Key="ColorBrush3">#1370f3</SolidColorBrush>
@@ -71,6 +71,8 @@
 
         <StyleInclude Source="avares://PCL2.Neo/Controls/MyIconButton.axaml" />
         <StyleInclude Source="avares://PCL2.Neo/Controls/MyRadioButton.axaml" />
+        <StyleInclude Source="avares://PCL2.Neo/Controls/MyCard.axaml" />
+        <StyleInclude Source="avares://PCL2.Neo/Controls/MyButton.axaml" />
 
         <!--  TextBlock  -->
         <Style Selector="TextBlock">
