@@ -16,13 +16,17 @@ namespace PCL2.Neo.Controls;
 public class MyButton : Button
 {
     private Border? _panFore;
-    private readonly AnimationHelper _animation = new AnimationHelper();
+    private AnimationHelper _animation;
+
+    public MyButton()
+    {
+        _animation = new();
+    }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
         _panFore = e.NameScope.Find<Border>("PanFore")!;
-
         this.Loaded += (_, _) => RefreshColor();
 
         SetPseudoClasses();
@@ -31,12 +35,13 @@ public class MyButton : Button
     protected override async void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
+
         if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
         {
             _animation.CancelAndClear();
             _animation.Animations.AddRange([
-                new ScaleTransformScaleXAnimation(_panFore!, TimeSpan.FromMilliseconds(80), 0.955, new CubicEaseOut()),
-                new ScaleTransformScaleYAnimation(_panFore!, TimeSpan.FromMilliseconds(80), 0.955, new CubicEaseOut())
+                new ScaleTransformScaleXAnimation(this, TimeSpan.FromMilliseconds(80), 0.955, new CubicEaseOut()),
+                new ScaleTransformScaleYAnimation(this, TimeSpan.FromMilliseconds(80), 0.955, new CubicEaseOut())
             ]);
             await _animation.RunAsync();
         }
@@ -49,8 +54,8 @@ public class MyButton : Button
         {
             _animation.CancelAndClear();
             _animation.Animations.AddRange([
-                new ScaleTransformScaleXAnimation(_panFore!, TimeSpan.FromMilliseconds(300), 0.955, 1, new QuinticEaseOut()),
-                new ScaleTransformScaleYAnimation(_panFore!, TimeSpan.FromMilliseconds(300), 0.955, 1, new QuinticEaseOut())
+                new ScaleTransformScaleXAnimation(this, TimeSpan.FromMilliseconds(300), 0.955, 1, new QuinticEaseOut()),
+                new ScaleTransformScaleYAnimation(this, TimeSpan.FromMilliseconds(300), 0.955, 1, new QuinticEaseOut())
             ]);
             await _animation.RunAsync();
         }
@@ -90,33 +95,6 @@ public class MyButton : Button
     {
         get => GetValue(ColorTypeProperty);
         set => SetValue(ColorTypeProperty, value);
-    }
-
-    public static new readonly StyledProperty<IBrush> ForegroundProperty = AvaloniaProperty.Register<MyButton, IBrush>(
-        nameof(Foreground));
-
-    public new IBrush Foreground
-    {
-        get => GetValue(ForegroundProperty);
-        set => SetValue(ForegroundProperty, value);
-    }
-
-    public static new readonly StyledProperty<IBrush> BackgroundProperty = AvaloniaProperty.Register<MyButton, IBrush>(
-        nameof(Background));
-
-    public new IBrush Background
-    {
-        get => GetValue(BackgroundProperty);
-        set => SetValue(BackgroundProperty, value);
-    }
-
-    public new static readonly StyledProperty<Thickness> PaddingProperty = AvaloniaProperty.Register<MyButton, Thickness>(
-        nameof(Padding));
-
-    public new Thickness Padding
-    {
-        get => GetValue(PaddingProperty);
-        set => SetValue(PaddingProperty, value);
     }
 
     public static readonly StyledProperty<Transform> RealRenderTransformProperty = AvaloniaProperty.Register<MyButton, Transform>(

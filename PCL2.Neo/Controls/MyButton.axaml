@@ -41,9 +41,6 @@
                             TextTrimming="None"
                             VerticalAlignment="Center"
                             x:Name="LabText">
-                            <TextBlock.RenderTransform>
-                                <ScaleTransform />
-                            </TextBlock.RenderTransform>
                         </TextBlock>
                     </Border>
                 </Border>
@@ -55,6 +52,7 @@
                 <BrushTransition Duration="0:0:0.15" Property="Background" />
             </Transitions>
         </Setter>
+        
         <Style Selector="^:pointerover">
             <Style Selector="^:normal">
                 <Setter Property="Foreground" Value="{DynamicResource ColorBrush3}" />
