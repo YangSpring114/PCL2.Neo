@@ -21,7 +21,6 @@
         CornerRadius="8"
         Margin="18"
         Name="MainBorder">
-        <Border ClipToBounds="True" CornerRadius="8">
             <Grid RowDefinitions="Auto 1*">
                 <!--  title  -->
                 <StackPanel
