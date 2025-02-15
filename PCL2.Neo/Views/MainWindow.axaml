@@ -188,10 +188,21 @@
 
                     <Grid Grid.Row="1" Name="PanMain">
                         <StackPanel Orientation="Vertical">
-                            <pc:MyButton Margin="100" />
-                            <pc:MyButton Margin="100" />
+                            <pc:MyButton
+                                ColorType="Normal"
+                                Height="50"
+                                Margin="10" />
+                            <pc:MyButton
+                                ColorType="Highlight"
+                                Height="50"
+                                Margin="10" />
+                            <pc:MyButton
+                                ColorType="Red"
+                                Height="50"
+                                Margin="10" />
                         </StackPanel>
                     </Grid>
+                  
                 </Grid>
             </Border>
         </Border>
