@@ -27,7 +27,6 @@ public class MyButton : Button
     {
         base.OnApplyTemplate(e);
         _panFore = e.NameScope.Find<Border>("PanFore")!;
-        this.Loaded += (_, _) => RefreshColor();
 
         SetPseudoClasses();
     }
@@ -124,6 +123,7 @@ public class MyButton : Button
         set => SetValue(EventDataProperty, value);
     }
 
+    [Obsolete]
     private void RefreshColor()
     {
         if (_panFore is null) return;

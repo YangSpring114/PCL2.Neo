@@ -23,8 +23,8 @@
                     Name="PanBack"
                     UseLayoutRounding="False">
                     <Border
-                        Background="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Background}"
-                        BorderBrush="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Foreground}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding Foreground}"
                         BorderThickness="1"
                         CornerRadius="3"
                         Name="PanFore"
@@ -40,8 +40,7 @@
                             Text="{TemplateBinding Text}"
                             TextTrimming="None"
                             VerticalAlignment="Center"
-                            x:Name="LabText">
-                        </TextBlock>
+                            x:Name="LabText" />
                     </Border>
                 </Border>
             </ControlTemplate>
@@ -52,7 +51,19 @@
                 <BrushTransition Duration="0:0:0.15" Property="Background" />
             </Transitions>
         </Setter>
-        
+
+        <Style Selector="^:normal">
+            <Setter Property="Foreground" Value="{DynamicResource ColorBrush1}" />
+            <Setter Property="Background" Value="{DynamicResource ColorBrushHalfWhite}" />
+        </Style>
+        <Style Selector="^:highlight">
+            <Setter Property="Foreground" Value="{DynamicResource ColorBrush2}" />
+            <Setter Property="Background" Value="{DynamicResource ColorBrushHalfWhite}" />
+        </Style>
+        <Style Selector="^:red">
+            <Setter Property="Foreground" Value="{DynamicResource ColorBrushRedDark}" />
+            <Setter Property="Background" Value="{DynamicResource ColorBrushHalfWhite}" />
+        </Style>
         <Style Selector="^:pointerover">
             <Style Selector="^:normal">
                 <Setter Property="Foreground" Value="{DynamicResource ColorBrush3}" />

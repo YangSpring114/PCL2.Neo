@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -17,7 +18,7 @@ public partial class MainWindow : Window
 
         NavBackgroundBorder.PointerPressed += OnNavPointerPressed;
 
-        new ThemeHelper(this).Refresh();
+        new ThemeHelper(this).Refresh(Application.Current!.ActualThemeVariant);
 
         BtnTitleClose.Click += async (_, _) =>
         {
