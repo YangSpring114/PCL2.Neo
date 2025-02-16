@@ -31,7 +31,7 @@ jobs:
               run: |
                   echo "The current time is: ${{ steps.date.outputs.time }}"
 
-    linux:
+    build:
         runs-on: ubuntu-20.04
         needs: time
         steps:
