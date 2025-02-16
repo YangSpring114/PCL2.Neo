@@ -55,9 +55,9 @@ jobs:
                   cd ./PCL2.Neo
                   sudo su
                   dotnet restore -r osx-x64
-                  dotnet msbuild -t:BundleApp -p:RuntimeIdentifier=osx-x64  -property:Configuration=Release -p:SelfContained=true
+                  dotnet msbuild -t:BundleApp -p:RuntimeIdentifier=osx-x64  -property:Configuration=Release -p:SelfContained=true -p:TrimMode=link
                   dotnet restore -r osx-arm64
-                  dotnet msbuild -t:BundleApp -p:RuntimeIdentifier=osx-arm64  -property:Configuration=Release -p:SelfContained=true
+                  dotnet msbuild -t:BundleApp -p:RuntimeIdentifier=osx-arm64  -property:Configuration=Release -p:SelfContained=true -p:TrimMode=link
                   cd ./bin/Release/net9.0/
                   cd ./osx-x64/publish/
                   zip -9 -r ../../PCL2.Neo.osx.mac.x64.app.zip ./PCL2.Neo.app
@@ -68,9 +68,9 @@ jobs:
               run: |
                   cd ./PCL2.Neo
                   sudo su
-                  dotnet publish -r win-x86 --self-contained true -p:PublishSingleFile=true
-                  dotnet publish -r win-x64 --self-contained true -p:PublishSingleFile=true
-                  dotnet publish -r win-arm64 --self-contained true -p:PublishSingleFile=true
+                  dotnet publish -r win-x86 --self-contained true -p:PublishSingleFile=true -p:TrimMode=link
+                  dotnet publish -r win-x64 --self-contained true -p:PublishSingleFile=true -p:TrimMode=link
+                  dotnet publish -r win-arm64 --self-contained true -p:PublishSingleFile=true -p:TrimMode=link
                   mv ./bin/Release/net9.0/win-x86/publish/PCL2.Neo.exe ./bin/Release/net9.0/win-x86/publish/PCL2.Neo.win.x86.exe
                   mv ./bin/Release/net9.0/win-x64/publish/PCL2.Neo.exe ./bin/Release/net9.0/win-x64/publish/PCL2.Neo.win.x64.exe
                   mv ./bin/Release/net9.0/win-arm64/publish/PCL2.Neo.exe ./bin/Release/net9.0/win-arm64/publish/PCL2.Neo.win.arm64.exe
@@ -83,10 +83,45 @@ jobs:
                   cd ../
                   cd ./win-arm64/
                   zip -9 -r "../PCL2.Neo.win.arm64.zip" "./publish"
-            - name: UploadArtifacts
+            - name: UploadArtifacts linux.arm64
               uses: actions/upload-artifact@v4
               with:
-                  name: linux-artifacts
+                  name: linux.arm64
                   path: |
-                      PCL2.Neo/Deploy/OUT/*
-                      PCL2.Neo/bin/Release/net9.0/*.zip
+                      PCL2.Neo/Deploy/OUT/PCL2.Neo.linux.arm64.AppImage
+            - name: UploadArtifacts linux.x64
+              uses: actions/upload-artifact@v4
+              with:
+                  name: linux.x64
+                  path: |
+                      PCL2.Neo/Deploy/OUT/PCL2.Neo.linux.x64.AppImage
+            - name: UploadArtifacts win.x64
+              uses: actions/upload-artifact@v4
+              with:
+                  name: win.x64
+                  path: |
+                      PCL2.Neo/bin/Release/net9.0/PCL2.Neo.win.x64.zip
+            - name: UploadArtifacts win.x86
+              uses: actions/upload-artifact@v4
+              with:
+                  name: win.x86
+                  path: |
+                      PCL2.Neo/bin/Release/net9.0/PCL2.Neo.win.x86.zip
+            - name: UploadArtifacts win.arm64
+              uses: actions/upload-artifact@v4
+              with:
+                  name: win.arm64
+                  path: |
+                      PCL2.Neo/bin/Release/net9.0/PCL2.Neo.win.arm64.zip
+            - name: UploadArtifacts osx.mac.arm64
+              uses: actions/upload-artifact@v4
+              with:
+                  name: osx.mac.arm64
+                  path: |
+                      PCL2.Neo/bin/Release/net9.0/PCL2.Neo.osx.mac.arm64.app.zip
+            - name: UploadArtifacts osx.mac.x64
+              uses: actions/upload-artifact@v4
+              with:
+                  name: osx.mac.x64
+                  path: |
+                      PCL2.Neo/bin/Release/net9.0/PCL2.Neo.osx.mac.x64.app.zip
